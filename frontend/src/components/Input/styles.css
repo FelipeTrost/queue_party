@@ -1,0 +1,14 @@
+.cool-input {
+  background-color: transparent;
+  outline: none;
+  border: #bb86fc solid 2px;
+  border-radius: 3px;
+  color: #ffffff;
+  font-size: 1.1em;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.cool-input:focus {
+  transform: scale(1.1);
+}

@@ -1,0 +1,11 @@
+.cool-title {
+  color: #fff;
+}
+
+h1.cool-title {
+  font-size: 2.5em;
+}
+
+.cool-title.center {
+  text-align: center;
+}

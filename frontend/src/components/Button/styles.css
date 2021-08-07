@@ -1,0 +1,56 @@
+.cool-button {
+  position: relative;
+  overflow: hidden;
+
+  display: block;
+  outline: none;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 1.2em;
+  border-radius: 3px;
+  font-weight: bold;
+  align-self: center;
+
+  transition: all 0.3s ease;
+}
+
+.cool-button:hover {
+  transform: translateY(-3px);
+}
+
+.cool-button.primary {
+  color: #000;
+  background-color: #bb86fc;
+}
+
+.cool-button.primary-variant {
+  color: #fff;
+  background-color: #3700b3;
+}
+
+.cool-button.secondary {
+  color: #000;
+  background-color: #03dac6;
+}
+
+/* Button ripple */
+.cool-button:before {
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 0;
+  height: 0;
+}
+
+.cool-button:active:before {
+  transition: all 0.2s linear;
+  opacity: 0;
+  width: 200%;
+  height: 160px;
+  margin-top: -80px;
+  margin-left: -80px;
+}
