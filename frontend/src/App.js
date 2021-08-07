@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-function App() {
+import Room from "./domain/Room";
+import Host from "./domain/Host";
+import Landing from "./domain/Landing";
+
+import "./styles.css";
+import JoinRoom from "./domain/JoinRoom";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Switch>
+          <Route path="/host/:id">
+            <Host />
+          </Route>
+
+          <Route path="/room/:id">
+            <Room />
+          </Route>
+
+          <Route path="/joinroom">
+            <JoinRoom />
+          </Route>
+
+          <Route path="/">
+            <Landing />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
-
-export default App;
