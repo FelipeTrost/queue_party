@@ -7,29 +7,35 @@ import Landing from "./domain/Landing";
 
 import "./styles.css";
 import JoinRoom from "./domain/JoinRoom";
+import { SocketProvider } from "./context/socket";
+import { ErrorContext } from "./context/errorDispatcher";
 
 export default function App() {
   return (
     <Router>
-      <div>
-        <Switch>
-          <Route path="/host/:id">
-            <Host />
-          </Route>
+      <ErrorContext>
+        <SocketProvider>
+          <div>
+            <Switch>
+              <Route path="/host">
+                <Host />
+              </Route>
 
-          <Route path="/room/:id">
-            <Room />
-          </Route>
+              <Route path="/room/:id">
+                <Room />
+              </Route>
 
-          <Route path="/joinroom">
-            <JoinRoom />
-          </Route>
+              <Route path="/joinroom">
+                <JoinRoom />
+              </Route>
 
-          <Route path="/">
-            <Landing />
-          </Route>
-        </Switch>
-      </div>
+              <Route path="/">
+                <Landing />
+              </Route>
+            </Switch>
+          </div>
+        </SocketProvider>
+      </ErrorContext>
     </Router>
   );
 }

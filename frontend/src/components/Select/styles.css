@@ -1,0 +1,19 @@
+.cool-select {
+  background-color: transparent;
+  outline: none;
+  border: #03dac6 solid 2px;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 1.1em;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.cool-select option {
+  color: #000;
+  background-color: #03dac6;
+}
+
+.cool-select:hover {
+  transform: translateY(-3px);
+}

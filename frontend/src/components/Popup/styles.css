@@ -1,0 +1,46 @@
+.cool-popup {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: #fff;
+}
+
+.cool-popup .close {
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.cool-popup.enter {
+  animation: enter 0.3s ease;
+  animation-fill-mode: both;
+}
+
+.cool-popup.hide {
+  visibility: hidden;
+  animation: hide 0.3s ease;
+}
+
+@keyframes hide {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0);
+  }
+}
+
+@keyframes enter {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}

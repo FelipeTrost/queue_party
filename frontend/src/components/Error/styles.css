@@ -1,0 +1,46 @@
+.cool-error-container {
+  position: absolute;
+  bottom: 40px;
+  overflow: hidden;
+  background-color: transparent;
+  left: 0;
+  right: 0;
+}
+
+.cool-error {
+  background-color: #fc6679;
+  padding: 10px 20px;
+  border-radius: 4px;
+  position: relative;
+  animation: enter 0.3s ease;
+  width: fit-content;
+  margin: auto;
+}
+
+.cool-error.hide {
+  animation: hide 0.3s ease;
+  animation-fill-mode: both;
+}
+
+.cool-error p {
+  margin: 0;
+  padding: 0;
+  font-size: 1.1em;
+  color: #000;
+}
+
+@keyframes enter {
+  from {
+    transform: translateY(150px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hide {
+  to {
+    transform: translateY(100px);
+    visibility: hidden;
+  }
+}

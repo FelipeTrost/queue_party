@@ -1,0 +1,15 @@
+.cool-room-header {
+  display: flex;
+  direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cool-room-header .guests {
+  color: #b686fc;
+  font-size: 1.1em;
+}
+
+.cool-room-header.secondary .guests {
+  color: #03dac6 !important;
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles.css";
 
-export default function Button({ children, onClick, type }) {
+export default function Button({ children, onClick, type, style }) {
   type = !type ? "primary" : type;
 
   if (type !== "primary" && type !== "secondary" && type !== "primary-variant")
@@ -9,6 +9,7 @@ export default function Button({ children, onClick, type }) {
 
   return (
     <button
+      style={style}
       className={`cool-button button-base ripple ${type}`}
       onClick={onClick}
     >

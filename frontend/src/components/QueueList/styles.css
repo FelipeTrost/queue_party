@@ -1,0 +1,42 @@
+.cool-queue-list .cool-track {
+  color: #fff;
+  padding: 10px;
+  margin: 20px 0;
+  border: 2px solid #bb86fc;
+  border-radius: 3px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-width: 300px;
+}
+
+.cool-queue-list.secondary .cool-track {
+  border: 2px solid #03dac6;
+}
+
+.cool-queue-list .cool-track .presenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px;
+}
+
+.cool-queue-list .cool-track .presenter p {
+  margin: 0;
+}
+
+.cool-queue-list .cool-track .presenter p.title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.cool-queue-list .cool-track .presenter p.artist {
+  color: #b1aeae;
+}
+
+.cool-queue-list .cool-track img {
+  display: block;
+  height: 60px;
+  width: 60px;
+}
