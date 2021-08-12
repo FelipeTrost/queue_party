@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
   const [connected, setConnected] = useState();
 
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
+    socket.current = io(process.env.REACT_APP_SERVER_URL);
 
     socket.current.on("connect", () => {
       setConnected(true);
