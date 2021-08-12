@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import Container from "../Container";
 import Input from "../Input";
+import QueueList from "../QueueList";
 
 async function search(token, query) {
   try {
@@ -20,18 +22,34 @@ async function search(token, query) {
   }
 }
 
-export default function SpotifySerach({ token }) {
+export default function SpotifySerach({ token, onTrack }) {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    search(token, query).then((r) => r.tracks && setResults(r.tracks.items));
+    search(token, query).then(
+      (r) =>
+        r.tracks &&
+        setResults(
+          r.tracks.items.map((item) => ({
+            name: item.name,
+            id: item.id,
+            artist: item.artists.map((a) => a.name).join(" "),
+            picture: item.album.images[1].url,
+          }))
+        )
+    );
   }, [query]);
 
   return (
-    <div style={{ color: "#fff" }}>
-      <Input placeholder="Search something" onChange={setQuery} />
-      {JSON.stringify(results.map((t) => t.name))}
-    </div>
+    <Container style={{ padding: "20px 0", color: "black!important" }}>
+      <Input
+        style={{ width: "100%" }}
+        placeholder="Search something"
+        onChange={setQuery}
+        type="black"
+      />
+      <QueueList queue={results} type="black" onClick={onTrack} />
+    </Container>
   );
 }

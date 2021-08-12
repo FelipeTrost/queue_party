@@ -11,10 +11,10 @@ const server = app.listen(port, () => {
 });
 
 let accessToken;
-// clientCredentials((access_token) => {
-//   io.emit("token-update", access_token);
-//   accessToken = access_token;
-// });
+clientCredentials((access_token) => {
+  io.emit("token-update", access_token);
+  accessToken = access_token;
+});
 const getAccessToken = () => accessToken;
 
 const io = new Server(server, {

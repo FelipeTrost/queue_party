@@ -61,8 +61,8 @@ export default function Room() {
     });
   }, []);
 
-  const queueit = () => {
-    const id = inputToId(songInput);
+  const queueit = (track) => {
+    const id = inputToId(songInput || track);
     console.log(id);
     socket.emit(
       "put-in-queue",
@@ -82,7 +82,13 @@ export default function Room() {
   return (
     <Container>
       <Popup show={searchPopup} close={() => setSearchPopup(false)}>
-        <SpotifySerach token={spotifyToken} />
+        <SpotifySerach
+          token={spotifyToken}
+          onTrack={(track) => {
+            queueit(track);
+            setSearchPopup(false);
+          }}
+        />
       </Popup>
 
       <RoomHeader roomId={roomId} guests={guests} />

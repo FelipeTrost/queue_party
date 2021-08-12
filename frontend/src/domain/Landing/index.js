@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import Container from "../../components/Container";
 import Title from "../../components/Title";
 
-const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${process.env.REACT_APP_REDIRECT_URL}t&scope=user-modify-playback-state%20user-read-playback-state`;
+const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${process.env.REACT_APP_REDIRECT_URL}&scope=user-modify-playback-state%20user-read-playback-state`;
 
 export default function Landing() {
   const router = useHistory();

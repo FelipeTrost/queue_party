@@ -48,7 +48,7 @@ class RoomGroup {
     if (this.roomOwners[creatorId] || this.roomParticipants[creatorId])
       return false;
 
-    // if (!(await pingToken(token))) return false;
+    if (!(await pingToken(token))) return false;
 
     const roomId = this.getRoomId();
     this.rooms[roomId] = {

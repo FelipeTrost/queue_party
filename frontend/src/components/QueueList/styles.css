@@ -11,6 +11,10 @@
   max-width: 300px;
 }
 
+.cool-queue-list.black .cool-track {
+  color: #000;
+}
+
 .cool-queue-list.secondary .cool-track {
   border: 2px solid #03dac6;
 }
@@ -33,6 +37,10 @@
 
 .cool-queue-list .cool-track .presenter p.artist {
   color: #b1aeae;
+}
+
+.cool-queue-list.black .cool-track .presenter p.artist {
+  color: #636363;
 }
 
 .cool-queue-list .cool-track img {
