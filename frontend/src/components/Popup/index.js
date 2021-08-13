@@ -8,7 +8,7 @@ export default function Popup({ children, show, close }) {
   const className = `cool-popup ${actionClass}`;
 
   return (
-    <div className={className}>
+    <div className={className} onKeyPress={(e) => console.log(e.target)}>
       <span className="close" onClick={close}>
         X
       </span>

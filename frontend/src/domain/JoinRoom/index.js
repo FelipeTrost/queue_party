@@ -34,14 +34,21 @@ export default function JoinRoom() {
   return (
     <Container style={{ height: "100vh" }} center vcenter>
       <Popup show={scanner} close={() => setScanner(false)}>
-        <Container center vcenter style={{ height: "100vh " }}>
+        <div
+          style={{
+            height: "100vh ",
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <QrReader
             delay={300}
             onError={console.error}
             onScan={scann}
             style={{ width: "100%" }}
           />
-        </Container>
+        </div>
       </Popup>
 
       <Title>Join a queue room</Title>
