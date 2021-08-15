@@ -43,11 +43,15 @@ function configSocket(socket, io, getAccessToken) {
     Rooms.updatePlayingDevice(deviceId, socket.id)
   );
 
-  socket.on("disconnect", () => {
-    const [type, roomId, newGuests] = Rooms.leaveRoom(socket.id);
+  socket.on("disconnect", async () => {
+    console.log("Socket disconnected");
+    const [type, roomId, newGuests] = await Rooms.leaveRoom(socket.id);
+
+    console.log("resolve", type, roomId, newGuests);
 
     if (type === "owner") {
       io.to(roomId).emit("room-ended");
+      console.log("emitting room ended");
     } else if (type === "participant") {
       io.to(roomId).emit("update-participants", newGuests);
     }

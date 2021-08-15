@@ -1,5 +1,6 @@
 const ShortUniqueId = require("short-unique-id");
 const { getTrack, pingToken, putInQueue } = require("./spotify");
+const seconds2closeroom = 40 * 60;
 
 class RoomGroup {
   constructor() {
@@ -27,6 +28,9 @@ class RoomGroup {
     this.rooms = {};
     this.roomOwners = {};
     this.roomParticipants = {};
+
+    // Store tokens from users. and if they reconnect, give them their old room back
+    this.hostTokens = {};
     this.startuidlength = 4;
   }
 
@@ -50,6 +54,23 @@ class RoomGroup {
 
     if (!(await pingToken(token))) return false;
 
+    // If token is already in use, we just asume, the person just refreshed the page
+    const existingRoom = this.hostTokens[token];
+    // no need to create a room
+    // TODO:
+    if (existingRoom) {
+      clearTimeout(this.rooms[existingRoom].timeoutToClose);
+
+      const previousOwner = this.rooms[existingRoom].host;
+      delete this.roomOwners[previousOwner];
+
+      // update exising room with new host socket.id
+      this.rooms[existingRoom].host = creatorId;
+      this.roomOwners[creatorId] = this.rooms[existingRoom].roomId;
+
+      return existingRoom;
+    }
+
     const roomId = this.getRoomId();
     this.rooms[roomId] = {
       host: creatorId,
@@ -58,9 +79,11 @@ class RoomGroup {
       guests: {},
       queue: [],
       deviceId: null,
+      timeoutToClose: null,
     };
 
     this.roomOwners[creatorId] = roomId;
+    this.hostTokens[token] = roomId;
 
     return roomId;
   }
@@ -107,27 +130,40 @@ class RoomGroup {
     }
   }
 
+  closeRoom(roomId, personId) {
+    console.log("inside closing room");
+    for (const guest of Object.keys(this.rooms[roomId].guests))
+      delete this.roomParticipants[guest];
+
+    const roomToken = this.rooms[roomId].token;
+    delete this.hostTokens[roomToken];
+    delete this.rooms[roomId];
+    delete this.roomOwners[personId];
+  }
+
+  // TODO: if host disconnects, maybe no need to close the room
   leaveRoom(personId) {
-    if (this.roomOwners[personId]) {
-      const roomId = this.roomOwners[personId];
+    return new Promise((resolve, reject) => {
+      if (this.roomOwners[personId]) {
+        const roomId = this.roomOwners[personId];
 
-      for (const guest of Object.keys(this.rooms[roomId].guests))
-        delete roomParticipants[guest];
+        const timeout = setTimeout(() => {
+          this.closeRoom(roomId, personId);
+          resolve(["owner", roomId, null]);
+        }, 1000 * seconds2closeroom);
 
-      delete this.rooms[roomId];
-      delete this.roomOwners[personId];
+        this.rooms[roomId].timeoutToClose = timeout;
+      } else if (this.roomParticipants[personId]) {
+        const roomId = this.roomParticipants[personId];
 
-      return ["owner", roomId, null];
-    } else if (this.roomParticipants[personId]) {
-      const roomId = this.roomParticipants[personId];
+        delete this.rooms[roomId].guests[personId];
+        delete this.roomParticipants[personId];
 
-      delete this.rooms[roomId].guests[personId];
-      delete this.roomParticipants[personId];
-
-      return ["participant", roomId, this.rooms[roomId].guests];
-    }
-
-    return [null, null];
+        resolve(["participant", roomId, this.rooms[roomId].guests]);
+      } else {
+        resolve([null, null, null]);
+      }
+    });
   }
 
   updatePlayingDevice(deviceId, personId) {
