@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "../Container";
 
 import "./styles.css";
 
@@ -12,6 +11,7 @@ export default function Popup({ children, show, close }) {
       <span className="close" onClick={close}>
         X
       </span>
+
       {show && children}
     </div>
   );
