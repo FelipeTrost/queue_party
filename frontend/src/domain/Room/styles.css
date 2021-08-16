@@ -1,0 +1,43 @@
+.cool-search-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+}
+
+.cool-search-bar input {
+  width: 52%;
+}
+
+.cool-search-bar > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 32%;
+}
+
+.cool-search-bar > div button {
+  width: 65%;
+}
+
+@media screen and (max-width: 700px) {
+  .cool-search-bar {
+    flex-direction: column;
+  }
+
+  .cool-search-bar input {
+    width: 100%;
+  }
+
+  .cool-search-bar > div {
+    margin-top: 10px;
+    width: 100%;
+    align-items: stretch !important;
+  }
+
+  .cool-search-bar > div > * {
+    width: calc(50% - 5px) !important;
+  }
+}

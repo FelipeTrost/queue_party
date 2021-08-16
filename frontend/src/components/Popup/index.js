@@ -12,7 +12,7 @@ export default function Popup({ children, show, close }) {
       <span className="close" onClick={close}>
         X
       </span>
-      <Container>{show && children}</Container>
+      {show && children}
     </div>
   );
 }

@@ -13,3 +13,8 @@
 .cool-room-header.secondary .guests {
   color: #03dac6 !important;
 }
+
+.cool-room-header p {
+  text-align: center;
+  min-width: 40px;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+
 import Button from "../../components/Button";
 import Container from "../../components/Container";
 import Input from "../../components/Input";
@@ -11,6 +12,8 @@ import RoomHeader from "../../components/RoomHeader";
 import QueueList from "../../components/QueueList";
 import SpotifySerach from "../../components/SpotifySearch";
 import Popup from "../../components/Popup";
+
+import "./styles.css";
 
 const inputToId = (link) => {
   const regex = "https://open.spotify.com/track/(.*)\\?(.*)";
@@ -93,38 +96,17 @@ export default function Room() {
 
       <RoomHeader roomId={roomId} guests={guests} />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "stretch",
-        }}
-      >
+      <div className="cool-search-bar">
         <Input
-          style={{ width: "52%" }}
           onChange={(t) => setSongInput(t)}
           value={songInput}
           placeholder="spotify song link"
         />
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "stretch",
-            width: "32%",
-          }}
-        >
-          <Button style={{ width: "65%" }} onClick={queueit}>
-            Queueit
-          </Button>
+        <div>
+          <Button onClick={queueit}>Queueit</Button>
 
-          <Button
-            style={{ backgroundColot: "35%" }}
-            onClick={() => setSearchPopup(true)}
-          >
+          <Button onClick={() => setSearchPopup(true)}>
             <FaSpotify />
           </Button>
         </div>

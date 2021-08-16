@@ -1,4 +1,5 @@
 .cool-input {
+  display: block;
   background-color: transparent;
   outline: none;
   border: #bb86fc solid 2px;
@@ -8,6 +9,7 @@
   padding: 10px 20px;
   transition: all 0.3s ease;
 }
+
 .cool-input.black::placeholder {
   color: rgb(83, 83, 83);
   opacity: 1; /* Firefox */
