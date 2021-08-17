@@ -96,7 +96,7 @@ export default function Room() {
 
       <RoomHeader roomId={roomId} guests={guests} />
 
-      <div className="cool-search-bar">
+      {/* <div className="cool-search-bar">
         <Input
           onChange={(t) => setSongInput(t)}
           value={songInput}
@@ -104,13 +104,13 @@ export default function Room() {
         />
 
         <div>
-          <Button onClick={queueit}>Queueit</Button>
+          <Button onClick={queueit}>Queueit</Button> */}
 
-          <Button onClick={() => setSearchPopup(true)}>
-            <FaSpotify />
-          </Button>
-        </div>
-      </div>
+      <Button onClick={() => setSearchPopup(true)}>
+        <FaSpotify />
+      </Button>
+      {/* </div> */}
+      {/* </div> */}
       <QueueList queue={queue} setQueue={setQueue} />
     </Container>
   );
