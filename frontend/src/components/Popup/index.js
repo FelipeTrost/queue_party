@@ -8,9 +8,9 @@ export default function Popup({ children, show, close }) {
 
   return (
     <div className={className} onKeyPress={(e) => console.log(e.target)}>
-      <span className="close" onClick={close}>
-        X
-      </span>
+      <div className="close">
+        <span onClick={close}>X</span>
+      </div>
 
       {show && children}
     </div>
