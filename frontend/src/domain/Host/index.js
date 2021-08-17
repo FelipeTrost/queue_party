@@ -38,6 +38,7 @@ export default function Host() {
       }
 
       setRoom(room);
+      setQueue(room.queue);
     });
 
     socket.on("update-participants", (guests) => setGuests(guests));
