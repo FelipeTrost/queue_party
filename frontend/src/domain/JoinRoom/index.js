@@ -19,7 +19,7 @@ export default function JoinRoom() {
   const tryJoin = (room) => {
     room = room.toUpperCase();
 
-    if (room.length >= 4)
+    if (room.length >= 3)
       socket.emit("probe-room", room, (result) => {
         if (result) history.push(`/room/${room}`);
       });

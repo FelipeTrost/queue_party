@@ -32,7 +32,7 @@ class RoomGroup {
 
     // Store tokens from users. and if they reconnect, give them their old room back
     this.hostIdentifiers = {};
-    this.startuidlength = 4;
+    this.startuidlength = 3;
   }
 
   getRoom(id) {
