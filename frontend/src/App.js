@@ -17,7 +17,7 @@ export default function App() {
         <SocketProvider>
           <div>
             <Switch>
-              <Route path="/host">
+              <Route path="/host/:secret">
                 <Host />
               </Route>
 

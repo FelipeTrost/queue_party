@@ -1,9 +1,15 @@
+require("dotenv").config();
+
+const RoomGroup = require("./rooms");
+module.exports = new RoomGroup();
+
 const app = require("./app");
 const { Server } = require("socket.io");
 const configSocket = require("./socketio");
 const { clientCredentials } = require("./spotify");
 
 const port = process.env.PORT || 5000;
+
 const server = app.listen(port, () => {
   /* eslint-disable no-console */
   console.log(`Listening: http://localhost:${port}`);

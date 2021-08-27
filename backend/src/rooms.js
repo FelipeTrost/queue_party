@@ -1,5 +1,6 @@
 const ShortUniqueId = require("short-unique-id");
-const { getTrack, pingToken, putInQueue } = require("./spotify");
+const { encrypt, decrypt } = require("./encryption");
+const { getTrack, pingToken, putInQueue, getToken } = require("./spotify");
 const seconds2closeroom = 40 * 60;
 
 class RoomGroup {
@@ -30,7 +31,7 @@ class RoomGroup {
     this.roomParticipants = {};
 
     // Store tokens from users. and if they reconnect, give them their old room back
-    this.hostTokens = {};
+    this.hostIdentifiers = {};
     this.startuidlength = 4;
   }
 
@@ -48,44 +49,50 @@ class RoomGroup {
     return id;
   }
 
-  async createRoom(creatorId, token) {
-    if (this.roomOwners[creatorId] || this.roomParticipants[creatorId])
-      return false;
+  joinRoomHost(creatorId, secret) {
+    if (this.roomParticipants[creatorId])
+      return new Error("You're a room participant");
 
-    if (!(await pingToken(token))) return false;
+    const roomId = decrypt(secret);
+
+    if (!this.rooms[roomId]) return new Error("No room under given id");
+
+    if (this.rooms[roomId].host)
+      return new Error("This account already has an active room");
+
+    clearTimeout(this.rooms[roomId].timeoutToClose);
+
+    // update exising room with new host socket.id
+    this.rooms[roomId].host = creatorId;
+    this.roomOwners[creatorId] = roomId;
+
+    return roomId;
+  }
+
+  async createRoom(tokens, spotifyIdentifier) {
+    if (!tokens || !(await pingToken(tokens.access_token)))
+      return new Error("Invalid spotify authorization");
 
     // If token is already in use, we just asume, the person just refreshed the page
-    const existingRoom = this.hostTokens[token];
     // no need to create a room
-    // TODO:
-    if (existingRoom) {
-      clearTimeout(this.rooms[existingRoom].timeoutToClose);
-
-      const previousOwner = this.rooms[existingRoom].host;
-      delete this.roomOwners[previousOwner];
-
-      // update exising room with new host socket.id
-      this.rooms[existingRoom].host = creatorId;
-      this.roomOwners[creatorId] = this.rooms[existingRoom].roomId;
-
-      return existingRoom;
-    }
+    const existingRoom = this.hostIdentifiers[spotifyIdentifier];
+    if (existingRoom) return this.roomToSecret(existingRoom);
 
     const roomId = this.getRoomId();
     this.rooms[roomId] = {
-      host: creatorId,
-      token,
+      host: undefined,
+      tokens,
       roomId,
+      spotifyIdentifier,
       guests: {},
       queue: [],
       deviceId: null,
       timeoutToClose: null,
     };
 
-    this.roomOwners[creatorId] = roomId;
-    this.hostTokens[token] = roomId;
+    this.hostIdentifiers[spotifyIdentifier] = roomId;
 
-    return roomId;
+    return this.roomToSecret(roomId);
   }
 
   probeRoom(roomId, askingId) {
@@ -109,7 +116,7 @@ class RoomGroup {
       if (!roomId) return false;
 
       const room = this.rooms[roomId];
-      const token = room.token;
+      const token = await getToken(room.tokens);
 
       // if it's not a valid track getTrack throws an error
       const track = await getTrack(token, song);
@@ -125,20 +132,23 @@ class RoomGroup {
 
       return [roomId, track_json];
     } catch (error) {
-      console.log(error);
       return [false, null];
     }
   }
 
-  closeRoom(roomId, personId) {
-    console.log("inside closing room");
+  closeRoom(personId) {
+    const roomId = this.roomOwners[personId];
+    if (!roomId) return new Error("You don't own a room");
+
     for (const guest of Object.keys(this.rooms[roomId].guests))
       delete this.roomParticipants[guest];
 
-    const roomToken = this.rooms[roomId].token;
-    delete this.hostTokens[roomToken];
+    const identifier = this.rooms[roomId].spotifyIdentifier;
+    delete this.hostIdentifiers[identifier];
     delete this.rooms[roomId];
     delete this.roomOwners[personId];
+
+    return roomId;
   }
 
   // TODO: if host disconnects, maybe no need to close the room
@@ -147,11 +157,17 @@ class RoomGroup {
       if (this.roomOwners[personId]) {
         const roomId = this.roomOwners[personId];
 
+        // clear person from data structures
+        delete this.roomOwners[personId];
+        this.rooms[roomId].host = undefined;
+
+        // Set timeout for closing room
         const timeout = setTimeout(() => {
-          this.closeRoom(roomId, personId);
+          this.closeRoom(personId);
           resolve(["owner", roomId, null]);
         }, 1000 * seconds2closeroom);
 
+        // save timeout id inside room struct
         this.rooms[roomId].timeoutToClose = timeout;
       } else if (this.roomParticipants[personId]) {
         const roomId = this.roomParticipants[personId];
@@ -174,6 +190,14 @@ class RoomGroup {
     if (!roomId) return;
 
     this.rooms[roomId].deviceId = deviceId;
+  }
+
+  roomToSecret(roomId) {
+    return encrypt(roomId);
+  }
+
+  secretToRoom(secret) {
+    return decrypt(secret);
   }
 }
 
