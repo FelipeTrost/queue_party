@@ -101,7 +101,8 @@ class RoomGroup {
   }
 
   joinRoom(roomId, personId) {
-    if (!this.probeRoom(roomId, personId)) return false;
+    if (!this.probeRoom(roomId, personId))
+      return new Error("Room doesn't exist");
 
     this.rooms[roomId].guests[personId] = true;
     this.roomParticipants[personId] = roomId;
@@ -132,7 +133,7 @@ class RoomGroup {
 
       return [roomId, track_json];
     } catch (error) {
-      return [false, null];
+      return [error, null];
     }
   }
 

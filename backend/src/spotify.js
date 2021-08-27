@@ -157,7 +157,7 @@ async function putInQueue(token, track_id, device_id) {
     return true;
   } catch (err) {
     console.log(err.response.data);
-    throw false;
+    throw new Error(err.response.data.error.message || "An error ocurred");
   }
 }
 

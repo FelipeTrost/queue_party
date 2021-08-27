@@ -42,11 +42,13 @@ export default function Room() {
   const { id: roomId } = useParams();
 
   useEffect(() => {
-    socket.emit("join-room", roomId, (success, guests, queue, accessToken) => {
-      if (success === false) {
+    socket.emit("join-room", roomId, (response) => {
+      if (!response.success) {
         errorDispatcher("Room doesn't exist");
         return history.push("/");
       }
+
+      const [guests, queue, accessToken] = response.message;
 
       setSpotifyToken(accessToken);
       setLoading(false);
@@ -70,7 +72,7 @@ export default function Room() {
     socket.emit(
       "put-in-queue",
       id,
-      (success) => !success && errorDispatcher("Error: probably a bad link")
+      (response) => !response.success && errorDispatcher(response.message)
     );
     setSongInput("");
   };

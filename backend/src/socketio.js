@@ -4,32 +4,37 @@ function isError(variable) {
   return Object.getPrototypeOf(variable) === Error.prototype;
 }
 
+function makeResponse(input) {
+  if (isError(input)) return { success: false, message: input.message };
+  else return { success: true, message: input };
+}
+
 function configSocket(socket, io, getAccessToken) {
   socket.on("join-room-host", async (secret, callback) => {
     const roomId = Rooms.joinRoomHost(socket.id, secret);
 
     if (isError(roomId)) {
-      callback(false);
+      callback(makeResponse(roomId));
       console.error(roomId);
     } else {
       socket.join(roomId);
-      callback(Rooms.getRoom(roomId));
+      callback(makeResponse(Rooms.getRoom(roomId)));
     }
   });
 
   socket.on("probe-room", (room, callback) =>
-    callback(Rooms.probeRoom(room, socket.id))
+    callback(makeResponse(Rooms.probeRoom(room, socket.id)))
   );
 
   socket.on("join-room", (roomId, callback) => {
     const room = Rooms.joinRoom(roomId, socket.id);
 
-    if (room) {
+    if (!isError(room)) {
       socket.join(room.roomId);
-      callback(true, room.guests, room.queue, getAccessToken());
+      callback(makeResponse([room.guests, room.queue, getAccessToken()]));
       socket.to(room.roomId).emit("update-participants", room.guests);
     } else {
-      callback(false, null, null, null);
+      callback(makeResponse(room));
       console.error(room);
     }
   });
@@ -37,11 +42,11 @@ function configSocket(socket, io, getAccessToken) {
   socket.on("put-in-queue", async (song, callback) => {
     const [roomId, track_json] = await Rooms.putInQueue(song, socket.id);
 
-    if (roomId) {
+    if (!isError(roomId)) {
       io.to(roomId).emit("new-track", track_json);
-      callback(true);
+      callback(makeResponse(true));
     } else {
-      callback(false);
+      callback(makeResponse(roomId));
     }
   });
 

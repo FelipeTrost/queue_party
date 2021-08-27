@@ -26,12 +26,13 @@ export default function Host() {
   const { secret: roomSecret } = useParams();
 
   useEffect(() => {
-    socket.emit("join-room-host", roomSecret, (room) => {
-      if (!room) {
-        errorDispatcher("couldn't create room");
+    socket.emit("join-room-host", roomSecret, (response) => {
+      if (!response.success) {
+        errorDispatcher(response.message);
         return history.push("/");
       }
 
+      const room = response.message;
       setRoom(room);
       setQueue(room.queue);
     });
