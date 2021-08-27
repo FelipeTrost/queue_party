@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { FaQrcode } from "react-icons/fa";
 
@@ -21,17 +21,12 @@ export default function Host() {
   const [room, setRoom] = useState(null);
   const [guests, setGuests] = useState({});
   const [queue, setQueue] = useState([]);
-  const [devices, setDevices] = useState([]);
-  const [selectedDevice, setSelectedDevice] = useState(null);
   const [qrPopup, setQrPopup] = useState(false);
 
-  const urlParams = new URLSearchParams(window.location.hash.substring(1));
-  const token = urlParams.get("access_token");
-
-  if (!token) history.push("/");
+  const { secret: roomSecret } = useParams();
 
   useEffect(() => {
-    socket.emit("create-room", token, (room) => {
+    socket.emit("join-room-host", roomSecret, (room) => {
       if (!room) {
         errorDispatcher("couldn't create room");
         return history.push("/");
@@ -43,21 +38,7 @@ export default function Host() {
 
     socket.on("update-participants", (guests) => setGuests(guests));
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
-
-    // Get devices
-    fetch("https://api.spotify.com/v1/me/player/devices", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((r) => r.json())
-      .then((r) => setDevices([{ id: 0, name: "whatever" }, ...r.devices]))
-      .catch((err) => console.error(err));
   }, []);
-
-  useEffect(() => {
-    socket.emit("update-device", selectedDevice);
-  }, [selectedDevice]);
 
   if (!room)
     return (
@@ -86,6 +67,20 @@ export default function Host() {
       <Button type="secondary" onClick={() => setQrPopup(true)}>
         <FaQrcode />
       </Button>
+
+      <Button
+        type="secondary"
+        onClick={() => {
+          socket.emit("close-room", (r) => {
+            // here im not sure, maybe I should redirect to the home inconditionally
+            if (r) history.push("/");
+            else errorDispatcher("Couldn't close room");
+          });
+        }}
+      >
+        Close room
+      </Button>
+
       <br />
 
       {/* <Select options={devices} setValue={setSelectedDevice} /> */}
