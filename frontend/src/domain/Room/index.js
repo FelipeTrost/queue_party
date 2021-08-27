@@ -33,11 +33,12 @@ export default function Room() {
   const errorDispatcher = useErrorDispatcher();
 
   const [loading, setLoading] = useState(true);
+  const [searchPopup, setSearchPopup] = useState("");
+
+  // Room info
   const [guests, setGuests] = useState({});
   const [queue, setQueue] = useState([]);
-  const [songInput, setSongInput] = useState("");
   const [spotifyToken, setSpotifyToken] = useState("");
-  const [searchPopup, setSearchPopup] = useState("");
 
   const { id: roomId } = useParams();
 
@@ -59,6 +60,7 @@ export default function Room() {
     socket.on("update-participants", (guests) => setGuests(guests));
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
     socket.on("token-update", (accessToken) => setSpotifyToken(accessToken));
+    socket.on("new-queue", (tracks) => setQueue(tracks));
 
     socket.on("room-ended", () => {
       errorDispatcher("Room closed");
@@ -67,14 +69,12 @@ export default function Room() {
   }, []);
 
   const queueit = (track) => {
-    const id = inputToId(songInput || track);
-    console.log(id);
+    const id = inputToId(track);
     socket.emit(
       "put-in-queue",
       id,
       (response) => !response.success && errorDispatcher(response.message)
     );
-    setSongInput("");
   };
 
   if (loading)
@@ -86,33 +86,19 @@ export default function Room() {
 
   return (
     <Container>
-      <Popup show={searchPopup} close={() => setSearchPopup(false)}>
-        <SpotifySerach
-          token={spotifyToken}
-          onTrack={(track) => {
-            queueit(track);
-            setSearchPopup(false);
-          }}
-        />
-      </Popup>
+      {/* <Popup show={searchPopup} close={() => setSearchPopup(false)}> */}
+      {/* </Popup> */}
 
       <RoomHeader roomId={roomId} guests={guests} />
 
-      {/* <div className="cool-search-bar">
-        <Input
-          onChange={(t) => setSongInput(t)}
-          value={songInput}
-          placeholder="spotify song link"
-        />
+      <SpotifySerach
+        token={spotifyToken}
+        onTrack={(track) => {
+          queueit(track);
+          setSearchPopup(false);
+        }}
+      />
 
-        <div>
-          <Button onClick={queueit}>Queueit</Button> */}
-
-      <Button onClick={() => setSearchPopup(true)}>
-        <FaSpotify />
-      </Button>
-      {/* </div> */}
-      {/* </div> */}
       <QueueList queue={queue} setQueue={setQueue} />
     </Container>
   );

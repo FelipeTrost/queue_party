@@ -161,6 +161,24 @@ async function putInQueue(token, track_id, device_id) {
   }
 }
 
+async function getPlayingId(token) {
+  try {
+    const response = await axios.get("https://api.spotify.com/v1/me/player", {
+      headers: {
+        Authorization: `Bearer  ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.data) return null;
+
+    return response.data.item.id;
+  } catch (err) {
+    console.log(err.response.data);
+    return null;
+  }
+}
+
 module.exports = {
   getTrack,
   pingToken,
@@ -169,4 +187,5 @@ module.exports = {
   codeToToken,
   getIdentifier,
   getToken,
+  getPlayingId,
 };

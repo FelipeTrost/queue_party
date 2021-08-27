@@ -1,6 +1,12 @@
 const ShortUniqueId = require("short-unique-id");
 const { encrypt, decrypt } = require("./encryption");
-const { getTrack, pingToken, putInQueue, getToken } = require("./spotify");
+const {
+  getTrack,
+  pingToken,
+  putInQueue,
+  getToken,
+  getPlayingId,
+} = require("./spotify");
 const seconds2closeroom = 40 * 60;
 
 class RoomGroup {
@@ -33,6 +39,7 @@ class RoomGroup {
     // Store tokens from users. and if they reconnect, give them their old room back
     this.hostIdentifiers = {};
     this.startuidlength = 3;
+    this.roomUpdaters = {};
   }
 
   getRoom(id) {
@@ -49,7 +56,7 @@ class RoomGroup {
     return id;
   }
 
-  joinRoomHost(creatorId, secret) {
+  joinRoomHost(creatorId, secret, emit) {
     if (this.roomParticipants[creatorId])
       return new Error("You're a room participant");
 
@@ -60,6 +67,12 @@ class RoomGroup {
     if (this.rooms[roomId].host)
       return new Error("This account already has an active room");
 
+    // putting this here isn't really that good, but it works for nowj
+    if (!this.roomUpdaters[roomId]) {
+      const updaterId = this.queueUpdater(roomId, emit);
+      this.roomUpdaters[roomId] = updaterId;
+    }
+
     clearTimeout(this.rooms[roomId].timeoutToClose);
 
     // update exising room with new host socket.id
@@ -67,6 +80,41 @@ class RoomGroup {
     this.roomOwners[creatorId] = roomId;
 
     return roomId;
+  }
+
+  queueUpdater(roomId, emit) {
+    return setInterval(async () => {
+      try {
+        const room = this.rooms[roomId];
+
+        // if there isn't anything in the queue there is no need to check
+        if (!room.queue.length) return;
+
+        const token = await getToken(room.tokens);
+        const id = await getPlayingId(token);
+
+        // find first id match in queue
+        let end = 0;
+        let found = false;
+        for (let index = 0; index < room.queue.length; index++) {
+          if (room.queue[index].id == id) {
+            end = index;
+            found = true;
+
+            // We just take the first match
+            break;
+          }
+        }
+
+        if (found) {
+          // delete elements until match
+          room.queue.splice(0, end + 1);
+          emit(room.queue);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }, 2000);
   }
 
   async createRoom(tokens, spotifyIdentifier) {
@@ -79,6 +127,7 @@ class RoomGroup {
     if (existingRoom) return this.roomToSecret(existingRoom);
 
     const roomId = this.getRoomId();
+
     this.rooms[roomId] = {
       host: undefined,
       tokens,
@@ -127,6 +176,7 @@ class RoomGroup {
         name: track.name,
         artist: track.artists.map((artist) => artist.name).join(", "),
         picture: track.album.images[1].url,
+        id: track.id,
       };
 
       room.queue.push(track_json);
@@ -140,6 +190,9 @@ class RoomGroup {
   closeRoom(personId) {
     const roomId = this.roomOwners[personId];
     if (!roomId) return new Error("You don't own a room");
+
+    clearInterval(this.roomUpdaters[roomId]);
+    delete this.roomUpdaters[roomId];
 
     for (const guest of Object.keys(this.rooms[roomId].guests))
       delete this.roomParticipants[guest];

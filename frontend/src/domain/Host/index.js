@@ -39,6 +39,7 @@ export default function Host() {
 
     socket.on("update-participants", (guests) => setGuests(guests));
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
+    socket.on("new-queue", (tracks) => setQueue(tracks));
   }, []);
 
   if (!room)

@@ -11,7 +11,9 @@ function makeResponse(input) {
 
 function configSocket(socket, io, getAccessToken) {
   socket.on("join-room-host", async (secret, callback) => {
-    const roomId = Rooms.joinRoomHost(socket.id, secret);
+    const roomId = Rooms.joinRoomHost(socket.id, secret, (newQueue) =>
+      io.emit("new-queue", newQueue)
+    );
 
     if (isError(roomId)) {
       callback(makeResponse(roomId));

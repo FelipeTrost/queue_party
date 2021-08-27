@@ -35,11 +35,11 @@ export const SocketProvider = ({ children }) => {
 
     socket.current.on("pong", () => (pong = true));
 
-    const interval = setInterval(() => {
-      ping().catch(() => console.log("not connected"));
-    }, 1000);
+    // const interval = setInterval(() => {
+    //   ping().catch(() => console.log("not connected"));
+    // }, 1000);
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, []);
 
   return (
