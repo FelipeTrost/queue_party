@@ -17,6 +17,8 @@ export default function JoinRoom() {
   const [scanner, setScanner] = useState(false);
 
   const tryJoin = (room) => {
+    room = room.toUpperCase();
+
     if (room.length >= 4)
       socket.emit("probe-room", room, (result) => {
         if (result) history.push(`/room/${room}`);
