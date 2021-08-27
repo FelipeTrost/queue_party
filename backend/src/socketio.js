@@ -1,12 +1,17 @@
-const RoomGroup = require("./rooms");
-const Rooms = new RoomGroup();
+const Rooms = require("./index");
+
+function isError(variable) {
+  return Object.getPrototypeOf(variable) === Error.prototype;
+}
 
 function configSocket(socket, io, getAccessToken) {
-  socket.on("create-room", async (token, callback) => {
-    const roomId = await Rooms.createRoom(socket.id, token);
+  socket.on("join-room-host", async (secret, callback) => {
+    const roomId = Rooms.joinRoomHost(socket.id, secret);
 
-    if (!roomId) callback(false);
-    else {
+    if (isError(roomId)) {
+      callback(false);
+      console.error(roomId);
+    } else {
       socket.join(roomId);
       callback(Rooms.getRoom(roomId));
     }
@@ -25,6 +30,7 @@ function configSocket(socket, io, getAccessToken) {
       socket.to(room.roomId).emit("update-participants", room.guests);
     } else {
       callback(false, null, null, null);
+      console.error(room);
     }
   });
 
@@ -43,15 +49,22 @@ function configSocket(socket, io, getAccessToken) {
     Rooms.updatePlayingDevice(deviceId, socket.id)
   );
 
-  socket.on("disconnect", async () => {
-    console.log("Socket disconnected");
-    const [type, roomId, newGuests] = await Rooms.leaveRoom(socket.id);
+  socket.on("close-room", async (callback) => {
+    const roomId = Rooms.closeRoom(socket.id);
 
-    console.log("resolve", type, roomId, newGuests);
+    if (roomId) {
+      io.to(roomId).emit("room-ended");
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+
+  socket.on("disconnect", async () => {
+    const [type, roomId, newGuests] = await Rooms.leaveRoom(socket.id);
 
     if (type === "owner") {
       io.to(roomId).emit("room-ended");
-      console.log("emitting room ended");
     } else if (type === "participant") {
       io.to(roomId).emit("update-participants", newGuests);
     }
