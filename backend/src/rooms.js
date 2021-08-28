@@ -68,10 +68,8 @@ class RoomGroup {
       return new Error("This account already has an active room");
 
     // putting this here isn't really that good, but it works for nowj
-    if (!this.roomUpdaters[roomId]) {
-      const updaterId = this.queueUpdater(roomId, emit);
-      this.roomUpdaters[roomId] = updaterId;
-    }
+    if (!this.roomUpdaters[roomId].updaterId)
+      this.roomUpdaters[roomId].updaterId = this.queueUpdater(roomId, emit);
 
     clearTimeout(this.rooms[roomId].timeoutToClose);
 
@@ -93,6 +91,10 @@ class RoomGroup {
         const token = await getToken(room.tokens);
         const id = await getPlayingId(token);
 
+        // So that we don't delete things twice, can cause problems if a song
+        // comes twice in a row, but it's better this way
+        if (this.roomUpdaters[roomId].lastDeleted === id) return;
+
         // find first id match in queue
         let end = 0;
         let found = false;
@@ -110,6 +112,9 @@ class RoomGroup {
           // delete elements until match
           room.queue.splice(0, end + 1);
           emit(room.queue);
+
+          // save deleted id
+          this.roomUpdaters[roomId].lastDeleted = id;
         }
       } catch (error) {
         console.log(error);
@@ -141,6 +146,9 @@ class RoomGroup {
 
     this.hostIdentifiers[spotifyIdentifier] = roomId;
 
+    // putting this here isn't really that good, but it works for nowj
+    this.roomUpdaters[roomId] = { lastDeleted: null };
+
     return this.roomToSecret(roomId);
   }
 
@@ -163,7 +171,7 @@ class RoomGroup {
     try {
       const roomId = this.roomParticipants[personId];
 
-      if (!roomId) return false;
+      if (!roomId) return [new Error("You're not part of any room"), null];
 
       const room = this.rooms[roomId];
       const token = await getToken(room.tokens);
@@ -191,7 +199,7 @@ class RoomGroup {
     const roomId = this.roomOwners[personId];
     if (!roomId) return new Error("You don't own a room");
 
-    clearInterval(this.roomUpdaters[roomId]);
+    clearInterval(this.roomUpdaters[roomId].updaterId);
     delete this.roomUpdaters[roomId];
 
     for (const guest of Object.keys(this.rooms[roomId].guests))
