@@ -99,7 +99,7 @@ export default function Room() {
         }}
       />
 
-      <QueueList queue={queue} setQueue={setQueue} />
+      <QueueList queue={queue} setQueue={setQueue} autoKey />
     </Container>
   );
 }

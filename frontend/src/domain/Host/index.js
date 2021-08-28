@@ -87,7 +87,7 @@ export default function Host() {
 
       {/* <Select options={devices} setValue={setSelectedDevice} /> */}
 
-      <QueueList queue={queue} setQueue={setQueue} type="secondary" />
+      <QueueList queue={queue} setQueue={setQueue} type="secondary" autoKey />
     </Container>
   );
 }

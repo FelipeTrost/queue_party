@@ -2,14 +2,14 @@ import React from "react";
 import Title from "../Title";
 import "./styles.css";
 
-export default function QueueList({ queue, setQueue, style, type, onClick }) {
+export default function QueueList({ queue, style, type, onClick, autoKey }) {
   return (
     <div className={`cool-queue-list ${type || ""}`} style={style}>
       <Title type="h2">Queue</Title>
-      {queue.map((track) => (
+      {queue.map((track, i) => (
         <div
           className="cool-track"
-          key={track.id || track.name}
+          key={autoKey ? i : track.id}
           onClick={onClick && (() => onClick(track.id))}
         >
           <div className="presenter">
