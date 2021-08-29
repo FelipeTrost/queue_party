@@ -195,8 +195,14 @@ class RoomGroup {
     }
   }
 
-  closeRoom(personId) {
-    const roomId = this.roomOwners[personId];
+  closeRoom(id, isPerson) {
+    let roomId;
+    if (isPerson) {
+      roomId = this.roomOwners[id];
+    } else {
+      roomId = id;
+    }
+
     if (!roomId) return new Error("You don't own a room");
 
     clearInterval(this.roomUpdaters[roomId].updaterId);
@@ -207,8 +213,9 @@ class RoomGroup {
 
     const identifier = this.rooms[roomId].spotifyIdentifier;
     delete this.hostIdentifiers[identifier];
+
     delete this.rooms[roomId];
-    delete this.roomOwners[personId];
+    if (isPerson) delete this.roomOwners[id];
 
     return roomId;
   }
@@ -225,7 +232,7 @@ class RoomGroup {
 
         // Set timeout for closing room
         const timeout = setTimeout(() => {
-          this.closeRoom(personId);
+          this.closeRoom(roomId, false);
           resolve(["owner", roomId, null]);
         }, 1000 * seconds2closeroom);
 

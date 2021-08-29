@@ -57,7 +57,7 @@ function configSocket(socket, io, getAccessToken) {
   );
 
   socket.on("close-room", async (callback) => {
-    const roomId = Rooms.closeRoom(socket.id);
+    const roomId = Rooms.closeRoom(socket.id, true);
 
     if (roomId) {
       io.to(roomId).emit("room-ended");

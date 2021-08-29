@@ -14,7 +14,6 @@ async function getToken(tokens) {
   try {
     // We do this before, cause it's better to be safe than sorry
     const expires = new Date();
-    console.log("refreshing");
 
     const { data } = await axios({
       method: "post",
@@ -29,7 +28,7 @@ async function getToken(tokens) {
       },
     });
 
-    expires.setSeconds(expires.getSeconds() + data.expires);
+    expires.setSeconds(expires.getSeconds() + data.expires_in);
 
     tokens.access_token = data.access_token;
     tokens.expires = expires;
