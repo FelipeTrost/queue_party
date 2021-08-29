@@ -39,7 +39,7 @@ export default function JoinRoom() {
         <Container>
           <div
             style={{
-              height: "100vh ",
+              height: "80vh ",
               padding: 0,
               display: "flex",
               alignItems: "center",
