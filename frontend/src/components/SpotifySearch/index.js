@@ -66,7 +66,7 @@ export default function SpotifySerach({ token, onTrack }) {
         onFocus={() => setPopup(true)}
       />
 
-      <Popup show={popup} close={close}>
+      <Popup show={popup} close={close} animationIn="zoomInDown">
         <Container style={{ padding: "20px 0", color: "black!important" }}>
           <Input
             style={{ width: "100%" }}
