@@ -6,22 +6,24 @@ const context = createContext();
 export const useErrorDispatcher = () => useContext(context);
 
 export const ErrorContext = ({ children }) => {
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
   const activeError = useRef(null);
 
   const dispatchError = (err) => {
     if (activeError.current != null) clearTimeout(activeError.current);
 
     setError(err);
+    setShow(true);
     activeError.current = setTimeout(() => {
-      setError(null);
+      setShow(false);
     }, 3000);
   };
 
   return (
     <>
       <context.Provider value={dispatchError}>{children}</context.Provider>
-      <Error show={error} text={error} />
+      <Error show={show} text={error} />
     </>
   );
 };
