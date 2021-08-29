@@ -7,27 +7,33 @@ import Title from "../../components/Title";
 
 const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${process.env.REACT_APP_SERVER_URL}/spotify&scope=user-modify-playback-state%20user-read-playback-state`;
 export default function Landing() {
-  console.log(`${process.env.REACT_APP_SERVER_URL}/spotify`);
   const router = useHistory();
-  console.log(process.env);
 
   return (
-    <Container style={{ height: "100vh" }} center vcenter>
-      <Title>Queue Party</Title>
-
-      <Button
-        type="secondary"
-        onClick={() => {
-          window.location = spotifyAuthUrl;
+    <div className="landing-background">
+      <Container
+        style={{
+          height: "90vh",
+          position: "relative",
+          backgroundSize: "cover",
         }}
+        center
+        vcenter
       >
-        Create Room
-      </Button>
-      <br />
-      <Button type="primary" onClick={() => router.push("joinroom")}>
-        Join Room
-      </Button>
-      <br />
-    </Container>
+        <Title>Queue Party</Title>
+        <Button
+          type="secondary"
+          onClick={() => {
+            window.location = spotifyAuthUrl;
+          }}
+        >
+          Create Room
+        </Button>
+        <br />
+        <Button type="primary" onClick={() => router.push("joinroom")}>
+          Join Room
+        </Button>
+      </Container>
+    </div>
   );
 }
