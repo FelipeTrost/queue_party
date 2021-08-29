@@ -14,27 +14,29 @@ export default function App() {
   return (
     <Router>
       <ErrorContext>
-        <SocketProvider>
-          <div>
-            <Switch>
-              <Route path="/host/:secret">
-                <Host />
-              </Route>
+        <Switch>
+          <Route path="/host/:secret">
+            <SocketProvider>
+              <Host />
+            </SocketProvider>
+          </Route>
 
-              <Route path="/room/:id">
-                <Room />
-              </Route>
+          <Route path="/room/:id">
+            <SocketProvider>
+              <Room />
+            </SocketProvider>
+          </Route>
 
-              <Route path="/joinroom">
-                <JoinRoom />
-              </Route>
+          <Route path="/joinroom">
+            <SocketProvider>
+              <JoinRoom />
+            </SocketProvider>
+          </Route>
 
-              <Route path="/">
-                <Landing />
-              </Route>
-            </Switch>
-          </div>
-        </SocketProvider>
+          <Route path="/">
+            <Landing />
+          </Route>
+        </Switch>
       </ErrorContext>
     </Router>
   );
