@@ -33,6 +33,11 @@
   background-color: #03dac6;
 }
 
+.cool-button.red {
+  color: #000;
+  background-color: #cf6679;
+}
+
 /* Button ripple */
 .cool-button:before {
   border-radius: 50%;

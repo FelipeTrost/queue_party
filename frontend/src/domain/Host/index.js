@@ -66,23 +66,30 @@ export default function Host() {
         hostView
       />
 
-      <Button type="secondary" onClick={() => setQrPopup(true)}>
-        <FaQrcode />
-      </Button>
-
-      <Button
-        type="secondary"
-        onClick={() => {
-          socket.emit("close-room", (r) => {
-            // here im not sure, maybe I should redirect to the home inconditionally
-            if (r) history.push("/");
-            else errorDispatcher("Couldn't close room");
-          });
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
         }}
       >
-        Close room
-      </Button>
+        <Button
+          type="red"
+          onClick={() => {
+            socket.emit("close-room", (r) => {
+              // here im not sure, maybe I should redirect to the home inconditionally
+              if (r) history.push("/");
+              else errorDispatcher("Couldn't close room");
+            });
+          }}
+        >
+          Close room
+        </Button>
 
+        <Button type="secondary" onClick={() => setQrPopup(true)}>
+          <FaQrcode />
+        </Button>
+      </div>
       <br />
 
       {/* <Select options={devices} setValue={setSelectedDevice} /> */}
