@@ -1,15 +1,21 @@
 import React from "react";
 import "./styles.css";
+import { Animated } from "react-animated-css";
 
 export default function Error({ show, text }) {
-  const classes = ["cool-error"];
-  if (!show) classes.push("hide");
-
+  console.log("show", show, "text", text);
   return (
     <div className="cool-error-container">
-      <div className={classes.join(" ")}>
-        <p>{text}</p>
-      </div>
+      <Animated
+        animationIn="bounceInLeft"
+        animationOut="bounceOutRight"
+        animateOnMount={false}
+        isVisible={show}
+      >
+        <div className="cool-error">
+          <p>{text}</p>
+        </div>
+      </Animated>
     </div>
   );
 }

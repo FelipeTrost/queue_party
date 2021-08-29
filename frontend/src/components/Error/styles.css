@@ -3,8 +3,8 @@
   bottom: 40px;
   overflow: hidden;
   background-color: transparent;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .cool-error {
@@ -16,8 +16,11 @@
   width: fit-content;
   margin: auto;
 }
+.cool-error p {
+  margin: 0;
+}
 
-.cool-error.hide {
+/* .cool-error.hide {
   animation: hide 0.3s ease;
   animation-fill-mode: both;
 }
@@ -43,4 +46,4 @@
     transform: translateY(100px);
     visibility: hidden;
   }
-}
+} */
