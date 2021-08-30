@@ -2,6 +2,7 @@ const axios = require("axios");
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
+const server_url = process.env.SERVER_URL;
 const auth_string =
   "Basic " + Buffer.from(`${client_id}:${client_secret}`).toString("base64");
 
@@ -65,7 +66,7 @@ async function codeToToken(code) {
       url: "https://accounts.spotify.com/api/token",
       params: {
         grant_type: "authorization_code",
-        redirect_uri: "http://localhost:5000/spotify",
+        redirect_uri: `${server_url}/spotify`,
         code,
       },
       headers: {
@@ -88,6 +89,7 @@ async function codeToToken(code) {
 }
 
 async function clientCredentials(callback) {
+  let expires;
   try {
     const { data } = await axios({
       method: "post",
@@ -102,13 +104,15 @@ async function clientCredentials(callback) {
     });
 
     const { access_token, expires_in } = data;
+    expires = expires_in;
+    console.log("refresh got:", access_token);
 
     callback(access_token);
-
-    // call function again when the token expires
-    setTimeout(() => clientCredentials(callback), expires_in * 1000);
   } catch (error) {
     console.log(error.response || error);
+  } finally {
+    // call function again when the token expires
+    setTimeout(() => clientCredentials(callback), expires * 1000);
   }
 }
 
