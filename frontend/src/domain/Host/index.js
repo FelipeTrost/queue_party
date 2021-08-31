@@ -33,7 +33,7 @@ export default function Host() {
       </Helmet>
       <Container>
         <Popup show={qrPopup} close={() => setQrPopup(false)}>
-          <Container center vcenter style={{ height: "100vh " }}>
+          <Container center vcenter style={{ height: "80vh " }}>
             <QRCode
               value={`${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`}
             />

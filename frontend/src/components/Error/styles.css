@@ -1,5 +1,7 @@
 .cool-error-container {
   position: absolute;
+  width: 80%;
+  max-width: 400px;
   bottom: 40px;
   overflow: hidden;
   background-color: transparent;

@@ -18,7 +18,7 @@ export default function Landing() {
       <div className="landing-background">
         <Container
           style={{
-            height: "90vh",
+            height: "80vh",
             position: "relative",
             backgroundSize: "cover",
           }}
