@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { useHistory } from "react-router-dom";
 
 import Button from "../../components/Button";
@@ -10,30 +11,35 @@ export default function Landing() {
   const router = useHistory();
 
   return (
-    <div className="landing-background">
-      <Container
-        style={{
-          height: "90vh",
-          position: "relative",
-          backgroundSize: "cover",
-        }}
-        center
-        vcenter
-      >
-        <Title>Queue Party</Title>
-        <Button
-          type="secondary"
-          onClick={() => {
-            window.location = spotifyAuthUrl;
+    <>
+      <Helmet>
+        <title>Queue party</title>
+      </Helmet>
+      <div className="landing-background">
+        <Container
+          style={{
+            height: "90vh",
+            position: "relative",
+            backgroundSize: "cover",
           }}
+          center
+          vcenter
         >
-          Create Room
-        </Button>
-        <br />
-        <Button type="primary" onClick={() => router.push("joinroom")}>
-          Join Room
-        </Button>
-      </Container>
-    </div>
+          <Title>Queue Party</Title>
+          <Button
+            type="secondary"
+            onClick={() => {
+              window.location = spotifyAuthUrl;
+            }}
+          >
+            Create Room
+          </Button>
+          <br />
+          <Button type="primary" onClick={() => router.push("joinroom")}>
+            Join Room
+          </Button>
+        </Container>
+      </div>
+    </>
   );
 }

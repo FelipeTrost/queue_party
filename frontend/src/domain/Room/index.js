@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import Container from "../../components/Container";
 import Title from "../../components/Title";
@@ -22,12 +23,17 @@ export default function Room() {
     );
 
   return (
-    <Container>
-      <RoomHeader roomId={roomId} guests={guests} />
+    <>
+      <Helmet>
+        <title>Room {roomId}</title>
+      </Helmet>
+      <Container>
+        <RoomHeader roomId={roomId} guests={guests} />
 
-      <SpotifySerach token={spotifyToken} onTrack={putInQueue} />
+        <SpotifySerach token={spotifyToken} onTrack={putInQueue} />
 
-      <QueueList queue={queue} autoKey />
-    </Container>
+        <QueueList queue={queue} autoKey />
+      </Container>
+    </>
   );
 }

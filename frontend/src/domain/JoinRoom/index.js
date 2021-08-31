@@ -10,6 +10,7 @@ import Popup from "../../components/Popup";
 import Title from "../../components/Title";
 
 import { useSocket } from "../../context/socket";
+import { Helmet } from "react-helmet";
 
 export default function JoinRoom() {
   const socket = useSocket();
@@ -34,46 +35,51 @@ export default function JoinRoom() {
   };
 
   return (
-    <Container style={{ height: "100vh" }} center vcenter>
-      <Popup show={scanner} close={() => setScanner(false)}>
-        <Container>
+    <>
+      <Helmet>
+        <title>Join room</title>
+      </Helmet>
+      <Container style={{ height: "100vh" }} center vcenter>
+        <Popup show={scanner} close={() => setScanner(false)}>
+          <Container>
+            <div
+              style={{
+                height: "80vh ",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <QrReader
+                delay={300}
+                onError={console.error}
+                onScan={scann}
+                style={{ width: "100%" }}
+                showViewFinder={false}
+              />
+            </div>
+          </Container>
+        </Popup>
+
+        <Title>Join a queue room</Title>
+
+        <Input onChange={tryJoin} placeholder="Room id" />
+        <Title type="h2">OR</Title>
+        <Button onClick={() => setScanner(true)}>
           <div
             style={{
-              height: "80vh ",
-              padding: 0,
               display: "flex",
               alignItems: "center",
+              flexDirection: "row",
             }}
           >
-            <QrReader
-              delay={300}
-              onError={console.error}
-              onScan={scann}
-              style={{ width: "100%" }}
-              showViewFinder={false}
-            />
+            Scan QR-code
+            <FaQrcode />
           </div>
-        </Container>
-      </Popup>
+        </Button>
 
-      <Title>Join a queue room</Title>
-
-      <Input onChange={tryJoin} placeholder="Room id" />
-      <Title type="h2">OR</Title>
-      <Button onClick={() => setScanner(true)}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-          }}
-        >
-          Scan QR-code
-          <FaQrcode />
-        </div>
-      </Button>
-
-      <br />
-    </Container>
+        <br />
+      </Container>
+    </>
   );
 }
