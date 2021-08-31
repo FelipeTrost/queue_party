@@ -25,7 +25,7 @@ function configSocket(socket, io, getAccessToken) {
   });
 
   socket.on("probe-room", (room, callback) =>
-    callback(makeResponse(Rooms.probeRoom(room, socket.id)))
+    callback(Rooms.probeRoom(room, socket.id))
   );
 
   socket.on("join-room", (roomId, callback) => {
