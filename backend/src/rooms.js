@@ -60,7 +60,7 @@ class RoomGroup {
     if (this.roomParticipants[creatorId])
       return new Error("You're a room participant");
 
-    const roomId = decrypt(secret);
+    const roomId = this.secretToRoom(secret);
 
     if (!this.rooms[roomId]) return new Error("No room under given id");
 
@@ -262,11 +262,13 @@ class RoomGroup {
   }
 
   roomToSecret(roomId) {
-    return encrypt(roomId);
+    const encrypted = encrypt(roomId);
+    return Buffer.from(encrypted).toString("base64");
   }
 
   secretToRoom(secret) {
-    return decrypt(secret);
+    const realSecret = Buffer.from(secret, "base64").toString("ascii");
+    return decrypt(realSecret);
   }
 }
 
