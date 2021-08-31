@@ -16,7 +16,7 @@ export default function QueueList({ queue, style, type, onClick, autoKey }) {
             <p className="title">{track.name}</p>
             <p className="artist">{track.artist}</p>
           </div>
-          <img src={track.picture} />
+          <img src={track.picture} alt={track.name} />
         </div>
       ))}
     </div>

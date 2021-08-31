@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import { useSocket } from "../../context/socket";
 import { useErrorDispatcher } from "../../context/errorDispatcher";
