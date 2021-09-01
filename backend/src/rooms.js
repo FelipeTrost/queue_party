@@ -221,10 +221,11 @@ class RoomGroup {
   }
 
   // TODO: if host disconnects, maybe no need to close the room
-  leaveRoom(personId) {
+  leaveRoom(personId, leaveRoom) {
     return new Promise((resolve, reject) => {
       if (this.roomOwners[personId]) {
         const roomId = this.roomOwners[personId];
+        leaveRoom(roomId);
 
         // clear person from data structures
         delete this.roomOwners[personId];
@@ -240,6 +241,7 @@ class RoomGroup {
         this.rooms[roomId].timeoutToClose = timeout;
       } else if (this.roomParticipants[personId]) {
         const roomId = this.roomParticipants[personId];
+        leaveRoom(roomId);
 
         delete this.rooms[roomId].guests[personId];
         delete this.roomParticipants[personId];

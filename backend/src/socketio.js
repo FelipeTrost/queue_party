@@ -61,6 +61,7 @@ function configSocket(socket, io, getAccessToken) {
 
     if (roomId) {
       io.to(roomId).emit("room-ended");
+      socket.leave(roomId);
       callback(true);
     } else {
       callback(false);
@@ -68,7 +69,9 @@ function configSocket(socket, io, getAccessToken) {
   });
 
   socket.on("disconnect", async () => {
-    const [type, roomId, newGuests] = await Rooms.leaveRoom(socket.id);
+    const [type, roomId, newGuests] = await Rooms.leaveRoom(socket.id, (id) =>
+      socket.leave(id)
+    );
 
     if (type === "owner") {
       io.to(roomId).emit("room-ended");
