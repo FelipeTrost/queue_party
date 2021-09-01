@@ -262,13 +262,28 @@ class RoomGroup {
   }
 
   roomToSecret(roomId) {
-    const encrypted = encrypt(roomId);
+    const identifier = this.rooms[roomId].spotifyIdentifier;
+    const secret = JSON.stringify({
+      roomId,
+      identifier,
+    });
+
+    const encrypted = encrypt(secret);
     return Buffer.from(encrypted).toString("base64");
   }
 
-  secretToRoom(secret) {
-    const realSecret = Buffer.from(secret, "base64").toString("ascii");
-    return decrypt(realSecret);
+  secretToRoom(input) {
+    try {
+      const encrypted = Buffer.from(input, "base64").toString("ascii");
+      const secret = JSON.parse(decrypt(encrypted));
+
+      if (this.hostIdentifiers[secret.identifier] == secret.roomId)
+        return secret.roomId;
+      else return null;
+    } catch (error) {
+      // because of an error parsing json probably
+      return null;
+    }
   }
 }
 
