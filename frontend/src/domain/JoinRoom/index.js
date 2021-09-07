@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import QrReader from "react-qr-reader";
-import { FaQrcode } from "react-icons/fa";
+import { ContinuousQrScanner } from "react-webcam-qr-scanner.ts";
 
 import Button from "../../components/Button";
 import Container from "../../components/Container";
@@ -11,11 +10,13 @@ import Title from "../../components/Title";
 
 import { useSocket } from "../../context/socket";
 import { Helmet } from "react-helmet";
+import { findAllInRenderedTree } from "react-dom/test-utils";
 
 export default function JoinRoom() {
   const socket = useSocket();
   const history = useHistory();
   const [scanner, setScanner] = useState(false);
+  const [scanned, setScanned] = useState(false);
 
   const tryJoin = (room) => {
     room = room.toUpperCase();
@@ -34,6 +35,10 @@ export default function JoinRoom() {
     tryJoin(match[1]);
   };
 
+  useEffect(() => {
+    scann(scanned);
+  }, [scanned]);
+
   return (
     <>
       <Helmet>
@@ -50,12 +55,9 @@ export default function JoinRoom() {
                 alignItems: "center",
               }}
             >
-              <QrReader
-                delay={300}
-                onError={console.error}
-                onScan={scann}
-                style={{ width: "100%" }}
-                showViewFinder={false}
+              <ContinuousQrScanner
+                onQrCode={setScanned}
+                style={{ width: "100%", height: "100%" }}
               />
             </div>
           </Container>
@@ -74,7 +76,6 @@ export default function JoinRoom() {
             }}
           >
             Scan QR-code
-            <FaQrcode />
           </div>
         </Button>
 
