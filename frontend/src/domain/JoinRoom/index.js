@@ -46,12 +46,17 @@ export default function JoinRoom() {
       </Helmet>
       <Container style={{ height: "100vh" }} center vcenter>
         <Popup show={scanner} close={() => setScanner(false)}>
-          <Container vcenter style={{ height: "80vh" }}>
+          <div
+            styke={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <ContinuousQrScanner
               onQrCode={setScanned}
               style={{ width: "100%", height: "100%" }}
             />
-          </Container>
+          </div>
         </Popup>
 
         <Title>Join a queue room</Title>

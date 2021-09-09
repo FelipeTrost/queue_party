@@ -15,7 +15,6 @@ export default function Popup({
     <Animated
       animationIn={animationIn || "slideInUp"}
       animationOut={animationOut || "slideOutDown"}
-      j
       animationInDuration={200}
       animationOutDuration={300}
       isVisible={show}
