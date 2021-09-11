@@ -60,6 +60,8 @@ export default function useRoom(roomId) {
           errorDispatcher("Reconnected");
           putInQueue(track);
         });
+      } else if (!response.success) {
+        errorDispatcher(response.message);
       }
     });
   }
