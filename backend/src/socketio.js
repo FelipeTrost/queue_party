@@ -5,7 +5,8 @@ function isError(variable) {
 }
 
 function makeResponse(input) {
-  if (isError(input)) return { success: false, message: input.message };
+  if (isError(input))
+    return { success: false, message: input.message, noRoom: input.noRoom };
   else return { success: true, message: input };
 }
 

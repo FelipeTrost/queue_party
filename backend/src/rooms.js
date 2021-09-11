@@ -9,6 +9,12 @@ const {
 } = require("./spotify");
 const seconds2closeroom = 40 * 60;
 
+function noRoomError(message) {
+  const error = new Error(message);
+  error.noRoom = true;
+  return error;
+}
+
 class RoomGroup {
   constructor() {
     this.uid = new ShortUniqueId({
@@ -62,7 +68,7 @@ class RoomGroup {
 
     const roomId = this.secretToRoom(secret);
 
-    if (!this.rooms[roomId]) return new Error("No room under given id");
+    if (!this.rooms[roomId]) return noRoomError("No room under given id");
 
     if (this.rooms[roomId].host)
       return new Error("This account already has an active room");
@@ -159,7 +165,7 @@ class RoomGroup {
 
   joinRoom(roomId, personId) {
     if (!this.probeRoom(roomId, personId))
-      return new Error("Room doesn't exist");
+      return noRoomError("Room doesn't exist");
 
     this.rooms[roomId].guests[personId] = true;
     this.roomParticipants[personId] = roomId;
@@ -171,7 +177,7 @@ class RoomGroup {
     try {
       const roomId = this.roomParticipants[personId];
 
-      if (!roomId) return [new Error("You're not part of any room"), null];
+      if (!roomId) return [noRoomError("You're not part of any room"), null];
 
       const room = this.rooms[roomId];
       const token = await getToken(room.tokens);

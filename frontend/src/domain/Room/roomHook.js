@@ -17,20 +17,29 @@ export default function useRoom(roomId) {
   const [queue, setQueue] = useState([]);
   const [spotifyToken, setSpotifyToken] = useState("");
 
-  useEffect(() => {
-    socket.emit("join-room", roomId, (response) => {
-      if (!response.success) {
-        errorDispatcher("Room doesn't exist");
-        return history.push("/");
-      }
+  function joinRoom(roomId) {
+    return new Promise((resolve, reject) => {
+      socket.emit("join-room", roomId, (response) => {
+        if (!response.success) {
+          errorDispatcher("Room doesn't exist");
+          reject();
+          return history.push("/");
+        }
 
-      const [guests, queue, accessToken] = response.message;
+        const [guests, queue, accessToken] = response.message;
 
-      setSpotifyToken(accessToken);
-      setLoading(false);
-      setGuests(guests);
-      setQueue(queue);
+        setSpotifyToken(accessToken);
+        setLoading(false);
+        setGuests(guests);
+        setQueue(queue);
+
+        resolve();
+      });
     });
+  }
+
+  useEffect(() => {
+    joinRoom(roomId);
 
     socket.on("update-participants", (guests) => setGuests(guests));
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
@@ -45,11 +54,14 @@ export default function useRoom(roomId) {
 
   function putInQueue(track) {
     const id = inputToId(track);
-    socket.emit(
-      "put-in-queue",
-      id,
-      (response) => !response.success && errorDispatcher(response.message)
-    );
+    socket.emit("put-in-queue", id, (response) => {
+      if (!response.success && response.noRoom) {
+        joinRoom(roomId).then(() => {
+          errorDispatcher("Reconnected");
+          putInQueue(track);
+        });
+      }
+    });
   }
 
   return [loading, guests, queue, spotifyToken, putInQueue];

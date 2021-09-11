@@ -10,7 +10,6 @@ import Title from "../../components/Title";
 
 import { useSocket } from "../../context/socket";
 import { Helmet } from "react-helmet";
-import { findAllInRenderedTree } from "react-dom/test-utils";
 
 export default function JoinRoom() {
   const socket = useSocket();
