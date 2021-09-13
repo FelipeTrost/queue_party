@@ -133,7 +133,7 @@ class RoomGroup {
       } catch (error) {
         console.log(error);
       }
-    }, 2000);
+    }, 5000);
   }
 
   async createRoom(tokens, spotifyIdentifier) {
