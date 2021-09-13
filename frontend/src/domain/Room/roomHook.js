@@ -16,6 +16,7 @@ export default function useRoom(roomId) {
   const [guests, setGuests] = useState({});
   const [queue, setQueue] = useState([]);
   const [spotifyToken, setSpotifyToken] = useState("");
+  const [nowPlaying, setNowPlaying] = useState(null);
 
   function joinRoom(roomId) {
     return new Promise((resolve, reject) => {
@@ -45,6 +46,7 @@ export default function useRoom(roomId) {
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
     socket.on("token-update", (accessToken) => setSpotifyToken(accessToken));
     socket.on("new-queue", (tracks) => setQueue(tracks));
+    socket.on("current-song", (track) => setNowPlaying(track));
 
     socket.on("room-ended", () => {
       errorDispatcher("Room closed");
@@ -66,5 +68,5 @@ export default function useRoom(roomId) {
     });
   }
 
-  return [loading, guests, queue, spotifyToken, putInQueue];
+  return [loading, guests, queue, spotifyToken, putInQueue, nowPlaying];
 }

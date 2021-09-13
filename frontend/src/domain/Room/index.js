@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 
 import Container from "../../components/Container";
 import Title from "../../components/Title";
+import Song from "../../components/Song";
 import RoomHeader from "../../components/RoomHeader";
 import QueueList from "../../components/QueueList";
 import SpotifySerach from "../../components/SpotifySearch";
@@ -13,7 +14,8 @@ import useRoom from "./roomHook";
 
 export default function Room() {
   const { id: roomId } = useParams();
-  const [loading, guests, queue, spotifyToken, putInQueue] = useRoom(roomId);
+  const [loading, guests, queue, spotifyToken, putInQueue, nowPlaying] =
+    useRoom(roomId);
 
   if (loading)
     return (
@@ -31,6 +33,13 @@ export default function Room() {
         <RoomHeader roomId={roomId} guests={guests} />
 
         <SpotifySerach token={spotifyToken} onTrack={putInQueue} />
+
+        {nowPlaying && (
+          <>
+            <Title type="h2">Now playing</Title>
+            <Song track={nowPlaying} type="secondary" />
+          </>
+        )}
 
         <QueueList queue={queue} autoKey />
       </Container>

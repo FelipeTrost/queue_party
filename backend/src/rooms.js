@@ -96,6 +96,14 @@ class RoomGroup {
 
         const token = await getToken(room.tokens);
         const id = await getPlayingId(token);
+        const track = await getTrack(token, `spotify:track:${id}`);
+        const track_json = {
+          name: track.name,
+          artist: track.artists.map((artist) => artist.name).join(", "),
+          picture: track.album.images[1].url,
+          id: track.id,
+        };
+        emit("current-song", track_json);
 
         // So that we don't delete things twice, can cause problems if a song
         // comes twice in a row, but it's better this way
@@ -117,7 +125,7 @@ class RoomGroup {
         if (found) {
           // delete elements until match
           room.queue.splice(0, end + 1);
-          emit(room.queue);
+          emit("new-queue", room.queue);
 
           // save deleted id
           this.roomUpdaters[roomId].lastDeleted = id;
