@@ -25,9 +25,11 @@ export const SocketProvider = ({ children }) => {
   const [connected, setConnected] = useState();
 
   useEffect(() => {
-    socket.current = io(process.env.REACT_APP_SERVER_URL, {
+    const socketObject = io(process.env.REACT_APP_SERVER_URL, {
       reconnectionDelayMax: 1000,
     });
+
+    socket.current = socketObject;
 
     socket.current.on("connect", () => {
       setConnected(true);
@@ -35,11 +37,7 @@ export const SocketProvider = ({ children }) => {
 
     socket.current.on("pong", () => (pong = true));
 
-    // const interval = setInterval(() => {
-    //   ping().catch(() => console.log("not connected"));
-    // }, 1000);
-
-    // return () => clearInterval(interval);
+    return () => socketObject.disconnect();
   }, []);
 
   return (
