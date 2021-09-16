@@ -59,7 +59,7 @@ export default function useRoom(roomId) {
     socket.emit("put-in-queue", id, (response) => {
       if (!response.success && response.noRoom) {
         joinRoom(roomId).then(() => {
-          errorDispatcher("Reconnected");
+          // errorDispatcher("Reconnected");
           putInQueue(track);
         });
       } else if (!response.success) {
