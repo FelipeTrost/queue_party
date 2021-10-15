@@ -38,4 +38,6 @@ instrument(io, {
   },
 });
 
-io.on("connection", (socket) => configSocket(socket, io, getAccessToken));
+io.on("connection", (socket) =>
+  configSocket(socket, io, getAccessToken, getAccessToken)
+);

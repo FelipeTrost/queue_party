@@ -39,6 +39,10 @@ export default function useRoom(roomId) {
     });
   }
 
+  function updateSearchToken() {
+    socket.emit("search-token", (token) => setSpotifyToken(token));
+  }
+
   useEffect(() => {
     joinRoom(roomId);
 
@@ -68,5 +72,13 @@ export default function useRoom(roomId) {
     });
   }
 
-  return [loading, guests, queue, spotifyToken, putInQueue, nowPlaying];
+  return [
+    loading,
+    guests,
+    queue,
+    spotifyToken,
+    putInQueue,
+    nowPlaying,
+    updateSearchToken,
+  ];
 }

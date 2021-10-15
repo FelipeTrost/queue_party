@@ -5,7 +5,6 @@ const cors = require("cors");
 const Rooms = require("./index");
 
 const { codeToToken, getIdentifier } = require("./spotify");
-const { encrypt, decrypt } = require("./encryption");
 
 const middlewares = require("./middlewares");
 

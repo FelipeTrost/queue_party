@@ -19,11 +19,11 @@ async function search(token, query) {
     return await json.json();
   } catch (error) {
     console.error(error);
-    return [];
+    return null;
   }
 }
 
-export default function SpotifySerach({ token, onTrack }) {
+export default function SpotifySerach({ token, onTrack, updateToken }) {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState("");
   const [popup, setPopup] = useState(false);
@@ -31,7 +31,7 @@ export default function SpotifySerach({ token, onTrack }) {
 
   const doSearch = async () => {
     const result = await search(token, query);
-    if (!result.tracks) return;
+    if (!result.tracks) return updateToken();
 
     const items = result.tracks.items;
 

@@ -14,8 +14,15 @@ import useRoom from "./roomHook";
 
 export default function Room() {
   const { id: roomId } = useParams();
-  const [loading, guests, queue, spotifyToken, putInQueue, nowPlaying] =
-    useRoom(roomId);
+  const [
+    loading,
+    guests,
+    queue,
+    spotifyToken,
+    putInQueue,
+    nowPlaying,
+    updateToken,
+  ] = useRoom(roomId);
 
   if (loading)
     return (
@@ -32,7 +39,11 @@ export default function Room() {
       <Container>
         <RoomHeader roomId={roomId} guests={guests} />
 
-        <SpotifySerach token={spotifyToken} onTrack={putInQueue} />
+        <SpotifySerach
+          token={spotifyToken}
+          onTrack={putInQueue}
+          updateToken={updateToken}
+        />
 
         {nowPlaying && (
           <>

@@ -10,7 +10,7 @@ function makeResponse(input) {
   else return { success: true, message: input };
 }
 
-function configSocket(socket, io, getAccessToken) {
+function configSocket(socket, io, getAccessToken, getAccessToken) {
   socket.on("join-room-host", async (secret, callback) => {
     const roomId = Rooms.joinRoomHost(socket.id, secret, (subject, message) =>
       io.to(roomId).emit(subject, message)
@@ -68,6 +68,8 @@ function configSocket(socket, io, getAccessToken) {
       callback(false);
     }
   });
+
+  socket.on("search-token", (callback) => callback(getAccessToken()));
 
   socket.on("disconnect", async () => {
     const [type, roomId, newGuests] = await Rooms.leaveRoom(socket.id, (id) =>
