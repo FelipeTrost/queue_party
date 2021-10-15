@@ -7,7 +7,7 @@ const {
   getToken,
   getPlayingId,
 } = require("./spotify");
-const seconds2closeroom = 1.5 * 60 * 60;
+const seconds2closeroom = (process.env.SECONDS_TO_CLOSE || 1.5 * 60) * 60;
 
 function noRoomError(message) {
   const error = new Error(message);
