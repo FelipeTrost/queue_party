@@ -17,9 +17,9 @@ export default function Checkbox({ text, type, style, onChange, checked }) {
       style={style}
       onClick={() => onChange()}
     >
-      <label for={text}> {text} </label>
+      <label htmlFor={text}> {text} </label>
 
-      <input name={text} type="checkbox" checked={checked} />
+      <input name={text} type="checkbox" checked={checked} readOnly />
     </div>
   );
 }
