@@ -56,9 +56,16 @@ export default function Host() {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
+            flexWrap: "wrap",
           }}
         >
-          <Button type="red" onClick={closeRoom}>
+          <Button
+            type="red"
+            onClick={closeRoom}
+            style={{
+              marginTop: "10px",
+            }}
+          >
             Close room
           </Button>
 
@@ -67,6 +74,7 @@ export default function Host() {
               display: "flex",
               flexDirection: "row",
               justifyContent: "flex-end",
+              marginTop: "10px",
             }}
           >
             <Checkbox
