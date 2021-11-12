@@ -21,7 +21,6 @@ export default function useHost(roomSecret) {
         errorDispatcher(response.message);
         return history.push("/");
       }
-      console.log(response);
 
       const [roomIn, permanetRoom] = response.message;
       setRoom(roomIn);
