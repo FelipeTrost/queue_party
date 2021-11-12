@@ -196,7 +196,8 @@ class RoomGroup {
 
   async putInQueue(song, personId) {
     try {
-      const roomId = this.roomParticipants[personId];
+      const roomId =
+        this.roomParticipants[personId] || this.roomOwners[personId];
 
       if (!roomId) return [noRoomError("You're not part of any room"), null];
 

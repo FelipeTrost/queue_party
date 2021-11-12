@@ -5,6 +5,7 @@ import { FaQrcode, FaExternalLinkAlt } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 import { useErrorDispatcher } from "../../context/errorDispatcher";
 
+import SpotifySerach from "../../components/SpotifySearch";
 import Title from "../../components/Title";
 import Container from "../../components/Container";
 import RoomHeader from "../../components/RoomHeader";
@@ -20,8 +21,17 @@ export default function Host() {
 
   const [qrPopup, setQrPopup] = useState(false);
 
-  const [room, guests, queue, permanent, togglePermanent, closeRoom] =
-    useHost(roomSecret);
+  const [
+    room,
+    guests,
+    queue,
+    permanent,
+    togglePermanent,
+    accessToken,
+    putInQueue,
+    updateToken,
+    closeRoom,
+  ] = useHost(roomSecret);
 
   if (!room)
     return (
@@ -57,6 +67,7 @@ export default function Host() {
             flexDirection: "row",
             justifyContent: "space-between",
             flexWrap: "wrap",
+            marginBottom: "20px",
           }}
         >
           <Button
@@ -107,6 +118,13 @@ export default function Host() {
             </Button>
           </div>
         </div>
+
+        <SpotifySerach
+          token={accessToken}
+          onTrack={putInQueue}
+          updateToken={updateToken}
+          type="secondary"
+        />
 
         <QueueList queue={queue} type="secondary" autoKey />
       </Container>

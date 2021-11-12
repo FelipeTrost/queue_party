@@ -13,7 +13,7 @@ function makeResponse(input) {
 function configSocket(socket, io, getAccessToken, getAccessToken) {
   socket.on("join-room-host", async (secret, callback) => {
     const msg = Rooms.joinRoomHost(socket.id, secret, (subject, message) =>
-      io.to(roomId).emit(subject, message)
+      io.to(msg.roomId).emit(subject, message)
     );
 
     if (isError(msg)) {
@@ -21,7 +21,11 @@ function configSocket(socket, io, getAccessToken, getAccessToken) {
       console.error(msg);
     } else {
       socket.join(msg.roomId);
-      const message = [Rooms.getRoom(msg.roomId), msg.permanentRoom];
+      const message = [
+        Rooms.getRoom(msg.roomId),
+        msg.permanentRoom,
+        getAccessToken(),
+      ];
       const response = makeResponse(message);
       callback(response);
     }

@@ -23,7 +23,7 @@ async function search(token, query) {
   }
 }
 
-export default function SpotifySerach({ token, onTrack, updateToken }) {
+export default function SpotifySerach({ token, onTrack, updateToken, type }) {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState("");
   const [popup, setPopup] = useState(false);
@@ -64,6 +64,7 @@ export default function SpotifySerach({ token, onTrack, updateToken }) {
         style={{ width: "100%" }}
         placeholder="Search a song"
         onFocus={() => setPopup(true)}
+        type={type}
       />
 
       <Popup show={popup} close={close} animationIn="zoomInDown">
@@ -72,13 +73,13 @@ export default function SpotifySerach({ token, onTrack, updateToken }) {
             style={{ width: "100%" }}
             placeholder="Search a song"
             onChange={setQuery}
-            type="black"
+            type={`black ${type || ""}`}
             Ref={inputRef}
           />
 
           <QueueList
             queue={results}
-            type="black"
+            type={`black ${type || ""}`}
             onClick={(t) => {
               close();
               onTrack(t);
