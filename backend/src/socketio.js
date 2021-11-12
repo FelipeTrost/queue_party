@@ -1,7 +1,6 @@
 const Rooms = require("./index");
 
 function isError(variable) {
-  console.log("iserror", variable);
   return Object.getPrototypeOf(variable) === Error.prototype;
 }
 
@@ -16,7 +15,6 @@ function configSocket(socket, io, getAccessToken, getAccessToken) {
     const msg = Rooms.joinRoomHost(socket.id, secret, (subject, message) =>
       io.to(roomId).emit(subject, message)
     );
-    console.log("gotten msg", msg);
 
     if (isError(msg)) {
       callback(makeResponse(msg));
@@ -25,7 +23,6 @@ function configSocket(socket, io, getAccessToken, getAccessToken) {
       socket.join(msg.roomId);
       const message = [Rooms.getRoom(msg.roomId), msg.permanentRoom];
       const response = makeResponse(message);
-      console.log("response", response);
       callback(response);
     }
   });
