@@ -42,6 +42,13 @@ export default function useHost(roomSecret) {
   }
 
   function togglePermanent() {
+    // Inform user about permanent mode the first time they use it
+    if (!localStorage.getItem("permanent-room-info")) {
+      alert(
+        "Normally if you disconnect your rooom will be closed in a couple of hours, permanent mode keeps it open until you decide to close it."
+      );
+      localStorage.setItem("permanent-room-info", true);
+    }
     socket.emit("toggle-permanent", !permanent);
     setPermanent((prev) => !prev);
   }
