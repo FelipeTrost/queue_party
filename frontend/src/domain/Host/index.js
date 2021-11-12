@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { FaQrcode } from "react-icons/fa";
+import { FaQrcode, FaExternalLinkAlt } from "react-icons/fa";
 import { Helmet } from "react-helmet";
+import { useErrorDispatcher } from "../../context/errorDispatcher";
 
 import Title from "../../components/Title";
 import Container from "../../components/Container";
@@ -15,6 +16,7 @@ import Checkbox from "../../components/Checkbox";
 
 export default function Host() {
   const { secret: roomSecret } = useParams();
+  const errorDispatcher = useErrorDispatcher();
 
   const [qrPopup, setQrPopup] = useState(false);
 
@@ -65,7 +67,6 @@ export default function Host() {
               display: "flex",
               flexDirection: "row",
               justifyContent: "flex-end",
-              width: "40%",
             }}
           >
             <Checkbox
@@ -75,6 +76,23 @@ export default function Host() {
               text="Permanent"
               style={{ marginRight: "10px" }}
             />
+
+            <Button
+              type="secondary"
+              style={{ marginRight: "10px" }}
+              onClick={(e) => {
+                navigator.clipboard
+                  .writeText(
+                    `${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`
+                  )
+                  .then(() => errorDispatcher("Copied room link to clipboard"))
+                  .catch(() =>
+                    errorDispatcher("Failed to copy room link to clipboard")
+                  );
+              }}
+            >
+              <FaExternalLinkAlt />
+            </Button>
 
             <Button type="secondary" onClick={() => setQrPopup(true)}>
               <FaQrcode />
