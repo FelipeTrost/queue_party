@@ -1,0 +1,78 @@
+.cool-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 3px;
+
+  transition: all 0.3s ease;
+  padding: 0 20px;
+}
+
+.cool-checkbox label {
+  padding: 10px 0px;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.cool-checkbox input {
+  position: relative;
+  appearance: none;
+  background-color: #fff;
+  margin: 10px 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.5em;
+  height: 1.5em;
+  border: 3px solid currentColor;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+}
+
+.cool-checkbox input::before {
+  content: " ";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border-radius: 1px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--form-control-color);
+  background-color: #000;
+}
+
+.cool-checkbox input:checked::before {
+  transform: scale(0.8);
+}
+
+.cool-checkbox input:focus {
+  outline: max(2px, 0.15em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
+}
+
+.cool-checkbox:hover {
+  transform: translateY(-3px);
+}
+
+/* COLORS */
+.cool-checkbox.primary {
+  color: #000;
+  background-color: #bb86fc;
+}
+
+.cool-checkbox.primary-variant {
+  color: #fff;
+  background-color: #3700b3;
+}
+
+.cool-checkbox.secondary {
+  color: #000;
+  background-color: #03dac6;
+}
+
+.cool-checkbox.red {
+  color: #000;
+  background-color: #cf6679;
+}

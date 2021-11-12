@@ -11,6 +11,7 @@ export default function useHost(roomSecret) {
 
   //   room info
   const [room, setRoom] = useState(null);
+  const [permanent, setPermanent] = useState(false);
   const [guests, setGuests] = useState({});
   const [queue, setQueue] = useState([]);
 
@@ -20,10 +21,12 @@ export default function useHost(roomSecret) {
         errorDispatcher(response.message);
         return history.push("/");
       }
+      console.log(response);
 
-      const room = response.message;
-      setRoom(room);
-      setQueue(room.queue);
+      const [roomIn, permanetRoom] = response.message;
+      setRoom(roomIn);
+      setPermanent(permanetRoom);
+      setQueue(roomIn.queue);
     });
 
     socket.on("update-participants", (guests) => setGuests(guests));
@@ -39,5 +42,10 @@ export default function useHost(roomSecret) {
     });
   }
 
-  return [room, guests, queue, closeRoom];
+  function togglePermanent() {
+    socket.emit("toggle-permanent", !permanent);
+    setPermanent((prev) => !prev);
+  }
+
+  return [room, guests, queue, permanent, togglePermanent, closeRoom];
 }

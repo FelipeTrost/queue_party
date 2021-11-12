@@ -83,7 +83,19 @@ class RoomGroup {
     this.rooms[roomId].host = creatorId;
     this.roomOwners[creatorId] = roomId;
 
-    return roomId;
+    return { roomId, permanentRoom: this.rooms[roomId].permanentRoom };
+  }
+
+  togglePermanentRoom(hostId, value) {
+    if (this.roomParticipants[hostId])
+      return new Error("You're a room participant");
+
+    const roomId = this.roomOwners[hostId];
+
+    this.rooms[roomId].permanentRoom = value;
+
+    // A bit redundant, because if host is logged in there shouldn;t be a timeout, but just to sure
+    if (value) clearTimeout(this.rooms[roomId].timeoutToClose);
   }
 
   queueUpdater(roomId, emit) {
@@ -156,6 +168,7 @@ class RoomGroup {
       queue: [],
       deviceId: null,
       timeoutToClose: null,
+      permanentRoom: false,
     };
 
     this.hostIdentifiers[spotifyIdentifier] = roomId;
@@ -245,14 +258,17 @@ class RoomGroup {
         delete this.roomOwners[personId];
         this.rooms[roomId].host = undefined;
 
-        // Set timeout for closing room
-        const timeout = setTimeout(() => {
-          this.closeRoom(roomId, false);
-          resolve(["owner", roomId, null]);
-        }, 1000 * seconds2closeroom);
+        // only set timeout to close room if it isn't permanent
+        if (!this.rooms[roomId].permanentRoom) {
+          // Set timeout for closing room
+          const timeout = setTimeout(() => {
+            this.closeRoom(roomId, false);
+            resolve(["owner", roomId, null]);
+          }, 1000 * seconds2closeroom);
 
-        // save timeout id inside room struct
-        this.rooms[roomId].timeoutToClose = timeout;
+          // save timeout id inside room struct
+          this.rooms[roomId].timeoutToClose = timeout;
+        }
       } else if (this.roomParticipants[personId]) {
         const roomId = this.roomParticipants[personId];
         leaveRoom(roomId);

@@ -11,13 +11,15 @@ import QueueList from "../../components/QueueList";
 import Popup from "../../components/Popup";
 import Button from "../../components/Button";
 import useHost from "./hostHook";
+import Checkbox from "../../components/Checkbox";
 
 export default function Host() {
   const { secret: roomSecret } = useParams();
 
   const [qrPopup, setQrPopup] = useState(false);
 
-  const [room, guests, queue, closeRoom] = useHost(roomSecret);
+  const [room, guests, queue, permanent, togglePermanent, closeRoom] =
+    useHost(roomSecret);
 
   if (!room)
     return (
@@ -58,9 +60,26 @@ export default function Host() {
             Close room
           </Button>
 
-          <Button type="secondary" onClick={() => setQrPopup(true)}>
-            <FaQrcode />
-          </Button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              width: "40%",
+            }}
+          >
+            <Checkbox
+              type="secondary"
+              onChange={togglePermanent}
+              checked={permanent}
+              text="Permanent"
+              style={{ marginRight: "10px" }}
+            />
+
+            <Button type="secondary" onClick={() => setQrPopup(true)}>
+              <FaQrcode />
+            </Button>
+          </div>
         </div>
 
         <QueueList queue={queue} type="secondary" autoKey />
