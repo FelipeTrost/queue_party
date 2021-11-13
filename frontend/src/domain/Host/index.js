@@ -104,7 +104,9 @@ export default function Host() {
                   .writeText(
                     `${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`
                   )
-                  .then(() => errorDispatcher("Copied room link to clipboard"))
+                  .then(() =>
+                    errorDispatcher("Copied room link to clipboard", true)
+                  )
                   .catch(() =>
                     errorDispatcher("Failed to copy room link to clipboard")
                   );
