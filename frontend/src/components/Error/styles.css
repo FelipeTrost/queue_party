@@ -22,6 +22,11 @@
   margin: 0;
 }
 
+.cool-error.green {
+  background-color: #2aa983;
+  color: #fff;
+}
+
 /* .cool-error.hide {
   animation: hide 0.3s ease;
   animation-fill-mode: both;
