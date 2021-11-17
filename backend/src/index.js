@@ -30,13 +30,13 @@ const io = new Server(server, {
   },
 });
 
-instrument(io, {
-  auth: {
-    type: "basic",
-    username: process.env.SOCKET_USER,
-    password: process.env.SOCKET_PASSWORD,
-  },
-});
+// instrument(io, {
+//   auth: {
+//     type: "basic",
+//     username: process.env.SOCKET_USER,
+//     password: process.env.SOCKET_PASSWORD,
+//   },
+// });
 
 io.on("connection", (socket) =>
   configSocket(socket, io, getAccessToken, getAccessToken)
