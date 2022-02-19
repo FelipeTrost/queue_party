@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDebounce } from "use-debounce";
 import Container from "../Container";
 import Input from "../Input";
 import Popup from "../Popup";
@@ -29,6 +30,8 @@ export default function SpotifySerach({ token, onTrack, updateToken, type }) {
   const [popup, setPopup] = useState(false);
   const inputRef = useRef();
 
+  const [debouncedQuery] = useDebounce(query, 500);
+
   const doSearch = async () => {
     const result = await search(token, query);
     if (!result.tracks) return updateToken();
@@ -47,7 +50,7 @@ export default function SpotifySerach({ token, onTrack, updateToken, type }) {
 
   useEffect(() => {
     doSearch();
-  }, [query]);
+  }, [debouncedQuery]);
 
   useEffect(() => {
     if (popup && inputRef.current) inputRef.current.focus();
