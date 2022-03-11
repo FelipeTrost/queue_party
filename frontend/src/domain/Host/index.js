@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { FaQrcode, FaExternalLinkAlt } from "react-icons/fa";
+import { FaQrcode, FaShareAlt } from "react-icons/fa";
 import { Helmet } from "react-helmet";
 import { useErrorDispatcher } from "../../context/errorDispatcher";
 
@@ -120,7 +120,7 @@ export default function Host() {
                 }
               }}
             >
-              <FaExternalLinkAlt />
+              <FaShareAlt />
             </Button>
 
             <Button type="secondary" onClick={() => setQrPopup(true)}>
