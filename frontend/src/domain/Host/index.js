@@ -100,16 +100,24 @@ export default function Host() {
               type="secondary"
               style={{ marginRight: "10px" }}
               onClick={(e) => {
-                navigator.clipboard
-                  .writeText(
-                    `${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`
-                  )
-                  .then(() =>
-                    errorDispatcher("Copied room link to clipboard", true)
-                  )
-                  .catch(() =>
-                    errorDispatcher("Failed to copy room link to clipboard")
-                  );
+                const roomLink = `${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`;
+
+                if (navigator.share) {
+                  navigator.share({
+                    title: "Queue Party",
+                    text: `Join room ${room.roomId} and add music to the queue`,
+                    url: roomLink,
+                  });
+                } else {
+                  navigator.clipboard
+                    .writeText(roomLink)
+                    .then(() =>
+                      errorDispatcher("Copied room link to clipboard", true)
+                    )
+                    .catch(() =>
+                      errorDispatcher("Failed to copy room link to clipboard")
+                    );
+                }
               }}
             >
               <FaExternalLinkAlt />
