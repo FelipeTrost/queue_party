@@ -6,6 +6,8 @@ import Button from "../../components/Button";
 import Container from "../../components/Container";
 import Title from "../../components/Title";
 
+import JoinRoom from "../../components/JoinRoom";
+
 const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${process.env.REACT_APP_SERVER_URL}/spotify&scope=user-modify-playback-state%20user-read-playback-state`;
 export default function Landing() {
   const router = useHistory();
@@ -15,6 +17,7 @@ export default function Landing() {
       <Helmet>
         <title>Queue party</title>
       </Helmet>
+
       <div className="landing-background">
         <Container
           style={{
@@ -25,19 +28,25 @@ export default function Landing() {
           center
           vcenter
         >
-          <Title>Queue Party</Title>
+          <Title style={{ marginBottom: "50px" }}>Queue Party</Title>
+
+          {/* <div> */}
+          <JoinRoom />
+
+          <Title type="h2">Or</Title>
+
           <Button
             type="secondary"
+            // style={{
+            //   marginTop: "20px",
+            // }}
             onClick={() => {
               window.location = spotifyAuthUrl;
             }}
           >
             Create Room
           </Button>
-          <br />
-          <Button type="primary" onClick={() => router.push("joinroom")}>
-            Join Room
-          </Button>
+          {/* </div> */}
         </Container>
       </div>
     </>

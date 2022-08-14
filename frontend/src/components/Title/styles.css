@@ -2,6 +2,18 @@
   color: #fff;
 }
 
+.cool-title.primary {
+  color: #bb86fc;
+}
+
+.cool-title.primary-variant {
+  color: #3700b3;
+}
+
+.cool-title.secondary {
+  color: #03dac6;
+}
+
 h1.cool-title {
   font-size: 2.5em;
 }

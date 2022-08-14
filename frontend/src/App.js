@@ -6,38 +6,29 @@ import Host from "./domain/Host";
 import Landing from "./domain/Landing";
 
 import "./styles.css";
-import JoinRoom from "./domain/JoinRoom";
 import { SocketProvider } from "./context/socket";
 import { ErrorContext } from "./context/errorDispatcher";
 
 export default function App() {
   return (
-    <Router>
-      <ErrorContext>
-        <Switch>
-          <Route path="/host/:secret">
-            <SocketProvider>
+    <SocketProvider>
+      <Router>
+        <ErrorContext>
+          <Switch>
+            <Route path="/host/:secret">
               <Host />
-            </SocketProvider>
-          </Route>
+            </Route>
 
-          <Route path="/room/:id">
-            <SocketProvider>
+            <Route path="/room/:id">
               <Room />
-            </SocketProvider>
-          </Route>
+            </Route>
 
-          <Route path="/joinroom">
-            <SocketProvider>
-              <JoinRoom />
-            </SocketProvider>
-          </Route>
-
-          <Route path="/">
-            <Landing />
-          </Route>
-        </Switch>
-      </ErrorContext>
-    </Router>
+            <Route path="/">
+              <Landing />
+            </Route>
+          </Switch>
+        </ErrorContext>
+      </Router>
+    </SocketProvider>
   );
 }
