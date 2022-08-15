@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { ContinuousQrScanner } from "react-webcam-qr-scanner.ts";
 
-import Button from "../Button";
-import Container from "../Container";
-import Input from "../Input";
-import Popup from "../Popup";
-import Title from "../Title";
+import Button from "./Button";
+import Input from "./Input";
+import Popup from "./Popup";
+import Title from "./Title";
 import { FaQrcode } from "react-icons/fa";
 
-import { useSocket } from "../../context/socket";
+import { useSocket } from "./../context/socket";
 
 export default function JoinRoom() {
   const socket = useSocket();

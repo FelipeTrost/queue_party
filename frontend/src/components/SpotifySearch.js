@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
-import Container from "../Container";
-import Input from "../Input";
-import Popup from "../Popup";
-import QueueList from "../QueueList";
+import Container from "./Container";
+import Input from "./Input";
+import Popup from "./Popup";
+import QueueList from "./QueueList";
 
 async function search(token, query) {
   try {

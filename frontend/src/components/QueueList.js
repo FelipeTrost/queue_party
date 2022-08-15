@@ -1,6 +1,6 @@
 import React from "react";
-import Song from "../Song";
-import Title from "../Title";
+import Song from "./Song";
+import Title from "./Title";
 
 export default function QueueList({ queue, style, type, onClick, autoKey }) {
   return (
