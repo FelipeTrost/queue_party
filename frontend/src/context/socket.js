@@ -11,15 +11,6 @@ const context = createContext();
 
 export const useSocket = () => useContext(context);
 
-let pong = false;
-const ping = () =>
-  new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (pong) resolve();
-      else reject();
-    }, 500);
-  });
-
 export const SocketProvider = ({ children }) => {
   const socket = useRef(null);
   const [connected, setConnected] = useState();
@@ -34,8 +25,6 @@ export const SocketProvider = ({ children }) => {
     socket.current.on("connect", () => {
       setConnected(true);
     });
-
-    socket.current.on("pong", () => (pong = true));
 
     return () => socketObject.disconnect();
   }, []);

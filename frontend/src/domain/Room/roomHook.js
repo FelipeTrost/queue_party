@@ -3,7 +3,8 @@ import { useHistory } from "react-router-dom";
 
 import { useErrorDispatcher } from "../../context/errorDispatcher";
 import { useSocket } from "../../context/socket";
-import inputToId from "./inputToSpotifyId";
+import { joinRoom } from "../../utils/socket";
+import inputToId from "../../utils/inputToSpotifyId";
 
 export default function useRoom(roomId) {
   const socket = useSocket();
@@ -18,33 +19,19 @@ export default function useRoom(roomId) {
   const [spotifyToken, setSpotifyToken] = useState("");
   const [nowPlaying, setNowPlaying] = useState(null);
 
-  function joinRoom(roomId) {
-    return new Promise((resolve, reject) => {
-      socket.emit("join-room", roomId, (response) => {
-        if (!response.success) {
-          errorDispatcher("Room doesn't exist");
-          reject();
-          return history.push("/");
-        }
-
-        const [guests, queue, accessToken] = response.message;
-
-        setSpotifyToken(accessToken);
-        setLoading(false);
-        setGuests(guests);
-        setQueue(queue);
-
-        resolve();
-      });
-    });
-  }
-
   function updateSearchToken() {
     socket.emit("search-token", (token) => setSpotifyToken(token));
   }
 
   useEffect(() => {
-    joinRoom(roomId);
+    joinRoom({ socket, errorDispatcher }, roomId)
+      .then(([guests, queue, accessToken]) => {
+        setSpotifyToken(accessToken);
+        setLoading(false);
+        setGuests(guests);
+        setQueue(queue);
+      })
+      .catch(() => history.push("/"));
 
     socket.on("update-participants", (guests) => setGuests(guests));
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
@@ -61,14 +48,15 @@ export default function useRoom(roomId) {
   function putInQueue(track) {
     const id = inputToId(track);
     socket.emit("put-in-queue", id, (response) => {
-      if (!response.success && response.noRoom) {
-        joinRoom(roomId).then(() => {
-          // errorDispatcher("Reconnected");
-          putInQueue(track);
-        });
-      } else if (!response.success) {
-        errorDispatcher(response.message);
-      }
+      // TODO: improve reconnection
+      // if (!response.success && response.noRoom) {
+      //   joinRoom(roomId).then(() => {
+      //     // errorDispatcher("Reconnected");
+      //     putInQueue(track);
+      //   });
+      // } else if (!response.success) {
+      //   errorDispatcher(response.message);
+      // }
     });
   }
 

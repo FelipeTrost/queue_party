@@ -1,25 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import QRCode from "react-qr-code";
-import { FaQrcode, FaShareAlt } from "react-icons/fa";
 import { Helmet } from "react-helmet";
-import { useErrorDispatcher } from "../../context/errorDispatcher";
 
 import SpotifySerach from "../../components/SpotifySearch";
 import Title from "../../components/Title";
 import Container from "../../components/Container";
 import RoomHeader from "../../components/RoomHeader";
 import QueueList from "../../components/QueueList";
-import Popup from "../../components/Popup";
 import Button from "../../components/Button";
 import useHost from "./hostHook";
 import Checkbox from "../../components/Checkbox";
+import ShareQR from "../../components/ShareQRButton";
+import ShareButton from "../../components/ShareButton";
 
 export default function Host() {
   const { secret: roomSecret } = useParams();
-  const errorDispatcher = useErrorDispatcher();
-
-  const [qrPopup, setQrPopup] = useState(false);
 
   const [
     room,
@@ -45,15 +40,8 @@ export default function Host() {
       <Helmet>
         <title>Host of {room.roomId}</title>
       </Helmet>
-      <Container>
-        <Popup show={qrPopup} close={() => setQrPopup(false)}>
-          <Container center vcenter style={{ height: "80vh " }}>
-            <QRCode
-              value={`${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`}
-            />
-          </Container>
-        </Popup>
 
+      <Container>
         <RoomHeader
           roomId={room.roomId}
           guests={guests}
@@ -96,36 +84,9 @@ export default function Host() {
               style={{ marginRight: "10px" }}
             />
 
-            <Button
-              type="secondary"
-              style={{ marginRight: "10px" }}
-              onClick={(e) => {
-                const roomLink = `${process.env.REACT_APP_PUBLIC_URL}/room/${room.roomId}`;
+            <ShareButton roomId={room.roomId} type="secondary" />
 
-                if (navigator.share) {
-                  navigator.share({
-                    title: "Queue Party",
-                    text: `Join room ${room.roomId} and add music to the queue`,
-                    url: roomLink,
-                  });
-                } else {
-                  navigator.clipboard
-                    .writeText(roomLink)
-                    .then(() =>
-                      errorDispatcher("Copied room link to clipboard", true)
-                    )
-                    .catch(() =>
-                      errorDispatcher("Failed to copy room link to clipboard")
-                    );
-                }
-              }}
-            >
-              <FaShareAlt />
-            </Button>
-
-            <Button type="secondary" onClick={() => setQrPopup(true)}>
-              <FaQrcode />
-            </Button>
+            <ShareQR roomId={room.roomId} type="secondary" />
           </div>
         </div>
 

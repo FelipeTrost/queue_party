@@ -3,7 +3,8 @@ import { useHistory } from "react-router-dom";
 
 import { useSocket } from "../../context/socket";
 import { useErrorDispatcher } from "../../context/errorDispatcher";
-import inputToId from "../Room/inputToSpotifyId";
+import inputToId from "../../utils/inputToSpotifyId";
+import { joinRoomHost } from "../../utils/socket";
 
 export default function useHost(roomSecret) {
   const history = useHistory();
@@ -17,27 +18,15 @@ export default function useHost(roomSecret) {
   const [guests, setGuests] = useState({});
   const [queue, setQueue] = useState([]);
 
-  function joinRoom(roomSecret) {
-    return new Promise((resolve, reject) => {
-      socket.emit("join-room-host", roomSecret, (response) => {
-        if (!response.success) {
-          errorDispatcher(response.message);
-          reject();
-          return history.push("/");
-        }
-
-        const [roomIn, permanetRoom, access] = response.message;
+  useEffect(() => {
+    joinRoomHost({ socket, errorDispatcher }, roomSecret)
+      .then(([roomIn, permanetRoom, access]) => {
         setRoom(roomIn);
         setPermanent(permanetRoom);
         setAccessToken(access);
         setQueue(roomIn.queue);
-        resolve();
-      });
-    });
-  }
-
-  useEffect(() => {
-    joinRoom(roomSecret);
+      })
+      .catch(() => history.push("/"));
 
     socket.on("token-update", (accessToken) => setAccessToken(accessToken));
     socket.on("update-participants", (guests) => setGuests(guests));
@@ -61,6 +50,7 @@ export default function useHost(roomSecret) {
       );
       localStorage.setItem("permanent-room-info", true);
     }
+
     socket.emit("toggle-permanent", !permanent);
     setPermanent((prev) => !prev);
   }
@@ -69,13 +59,14 @@ export default function useHost(roomSecret) {
     const id = inputToId(track);
 
     socket.emit("put-in-queue", id, (response) => {
-      if (!response.success && response.noRoom) {
-        joinRoom(roomSecret).then(() => {
-          putInQueue(track);
-        });
-      } else if (!response.success) {
-        errorDispatcher(response.message);
-      }
+      // TODO: better reconnection
+      // if (!response.success && response.noRoom) {
+      //   joinRoom(roomSecret).then(() => {
+      //     putInQueue(track);
+      //   });
+      // } else if (!response.success) {
+      //   errorDispatcher(response.message);
+      // }
     });
   }
 
