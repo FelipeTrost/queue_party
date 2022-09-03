@@ -27,36 +27,38 @@ export default function Landing() {
           center
           vcenter
         >
-          <Title style={{ marginBottom: "50px" }}>Queue Party</Title>
+          <div style={{ marginTop: "-100px" }}>
+            <Title style={{ marginBottom: "50px" }}>Queue Party</Title>
 
-          <JoinRoom />
+            <JoinRoom />
 
-          <div
-            style={{
-              width: "100%",
-            }}
-          >
-            <Title
-              type="h2"
-              variant="secondary"
+            <div
               style={{
-                fontWeight: "bold",
-                textAlgin: "left",
                 width: "100%",
-                marginTop: "50px",
               }}
             >
-              Create a Room
-            </Title>
+              <Title
+                type="h2"
+                variant="secondary"
+                style={{
+                  fontWeight: "bold",
+                  textAlgin: "left",
+                  width: "100%",
+                  marginTop: "50px",
+                }}
+              >
+                Create a Room
+              </Title>
 
-            <Button
-              type="secondary"
-              onClick={() => {
-                window.location = spotifyAuthUrl;
-              }}
-            >
-              <FaPlusCircle />
-            </Button>
+              <Button
+                type="secondary"
+                onClick={() => {
+                  window.location = spotifyAuthUrl;
+                }}
+              >
+                <FaPlusCircle />
+              </Button>
+            </div>
           </div>
         </Container>
       </div>
