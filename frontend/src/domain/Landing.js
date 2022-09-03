@@ -1,5 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
+import { FaPlusCircle } from "react-icons/fa";
 
 import Button from "../components/Button";
 import Container from "../components/Container";
@@ -21,29 +22,42 @@ export default function Landing() {
             height: "80vh",
             position: "relative",
             backgroundSize: "cover",
+            maxWidth: "400px",
           }}
           center
           vcenter
         >
           <Title style={{ marginBottom: "50px" }}>Queue Party</Title>
 
-          {/* <div> */}
           <JoinRoom />
 
-          <Title type="h2">Or</Title>
-
-          <Button
-            type="secondary"
-            // style={{
-            //   marginTop: "20px",
-            // }}
-            onClick={() => {
-              window.location = spotifyAuthUrl;
+          <div
+            style={{
+              width: "100%",
             }}
           >
-            Create Room
-          </Button>
-          {/* </div> */}
+            <Title
+              type="h2"
+              variant="secondary"
+              style={{
+                fontWeight: "bold",
+                textAlgin: "left",
+                width: "100%",
+                marginTop: "50px",
+              }}
+            >
+              Create a Room
+            </Title>
+
+            <Button
+              type="secondary"
+              onClick={() => {
+                window.location = spotifyAuthUrl;
+              }}
+            >
+              <FaPlusCircle />
+            </Button>
+          </div>
         </Container>
       </div>
     </>

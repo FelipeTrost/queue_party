@@ -17,19 +17,20 @@ export default function JoinRoom() {
   const [scanned, setScanned] = useState(false);
 
   const tryJoin = (room) => {
+    if (room.length < 3) return;
     room = room.toUpperCase();
 
-    if (room.length >= 3)
-      socket.emit("probe-room", room, (result) => {
-        if (result) history.push(`/room/${room}`);
-      });
+    socket.emit("probe-room", room, (result) => {
+      if (result) history.push(`/room/${room}`);
+      console.log("result", result);
+    });
   };
 
   const scann = (result) => {
     if (!result) return;
     const match = result.match(`${process.env.REACT_APP_PUBLIC_URL}/room/(.*)`);
-    console.log("result", result, match);
     if (!match) return;
+
     tryJoin(match[1]);
   };
 
@@ -38,7 +39,7 @@ export default function JoinRoom() {
   }, [scanned]);
 
   return (
-    <div>
+    <>
       <Popup show={scanner} close={() => setScanner(false)}>
         <div
           styke={{
@@ -53,35 +54,37 @@ export default function JoinRoom() {
         </div>
       </Popup>
 
-      <Title
-        type="h2"
-        variant="primary"
-        style={{ fontWeight: "bold", textAlgin: "left", width: "100%" }}
-      >
-        Join a Room
-      </Title>
+      <div style={{ width: "100%" }}>
+        <Title
+          type="h2"
+          variant="primary"
+          style={{ fontWeight: "bold", textAlgin: "left", width: "100%" }}
+        >
+          Join a Room
+        </Title>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "22px",
-          alignItems: "stretch",
-          alignContent: "stretch",
-        }}
-      >
-        <Input onChange={tryJoin} placeholder="Room id" />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "22px",
+            alignItems: "stretch",
+            alignContent: "stretch",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <Input
+            onChange={tryJoin}
+            placeholder="Room id"
+            style={{ width: "80%" }}
+          />
 
-        <Button onClick={() => setScanner(true)}>
-          <div
-            style={{
-              flexGrow: "1",
-            }}
-          >
+          <Button onClick={() => setScanner(true)}>
             <FaQrcode />
-          </div>
-        </Button>
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
