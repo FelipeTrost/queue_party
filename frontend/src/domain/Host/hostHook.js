@@ -12,6 +12,7 @@ export default function useHost(roomSecret) {
   const errorDispatcher = useErrorDispatcher();
 
   //   room info
+  const [nameScreen, setNameScreen] = useState(null);
   const [room, setRoom] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [permanent, setPermanent] = useState(false);
@@ -20,12 +21,7 @@ export default function useHost(roomSecret) {
 
   useEffect(() => {
     joinRoomHost({ socket, errorDispatcher }, roomSecret)
-      .then(([roomIn, permanetRoom, access]) => {
-        setRoom(roomIn);
-        setPermanent(permanetRoom);
-        setAccessToken(access);
-        setQueue(roomIn.queue);
-      })
+      .then((res) => initializeRoom(res))
       .catch(() => history.push("/"));
 
     socket.on("token-update", (accessToken) => setAccessToken(accessToken));
@@ -33,6 +29,27 @@ export default function useHost(roomSecret) {
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
     socket.on("new-queue", (tracks) => setQueue(tracks));
   }, []);
+
+  function initializeRoom(serverResponse) {
+    const { room: roomIn, spotifySearchToken } = serverResponse;
+
+    setNameScreen(!roomIn.roomNameSet);
+    if (!roomIn.roomNameSet) return;
+
+    setRoom(roomIn);
+    setPermanent(roomIn.permanetRoom); // might seem redundant, but here we keep the state of the permanent toggle element
+    setQueue(roomIn.queue); // again might seem redundant, but for updates I don't want the overhead of sending the room
+
+    if (spotifySearchToken) setAccessToken(spotifySearchToken);
+  }
+
+  function sendName(name) {
+    socket.emit("set-name-host", name, (response) => {
+      console.log("res", response);
+      if (response.success) initializeRoom({ room: response.message });
+      else errorDispatcher(response.message);
+    });
+  }
 
   function closeRoom() {
     socket.emit("close-room", (r) => {
@@ -75,6 +92,8 @@ export default function useHost(roomSecret) {
   }
 
   return [
+    nameScreen,
+    sendName,
     room,
     guests,
     queue,

@@ -7,28 +7,43 @@ function isError(variable) {
 function makeResponse(input) {
   if (isError(input))
     return { success: false, message: input.message, noRoom: input.noRoom };
-  else return { success: true, message: input };
+
+  // To not send valuable tokens
+  if (input.room) {
+    input.room = { ...input.room };
+    delete input.room["tokens"];
+  }
+  return { success: true, message: input };
 }
 
 function configSocket(socket, io, getAccessToken, getAccessToken) {
   socket.on("join-room-host", async (secret, callback) => {
-    const msg = Rooms.joinRoomHost(socket.id, secret, (subject, message) =>
-      io.to(msg.roomId).emit(subject, message)
+    const room = Rooms.joinRoomHost(
+      socket.id,
+      secret,
+      (roomId, subject, message) => io.to(roomId).emit(subject, message)
     );
 
-    if (isError(msg)) {
-      callback(makeResponse(msg));
-      console.error(msg);
-    } else {
-      socket.join(msg.roomId);
-      const message = [
-        Rooms.getRoom(msg.roomId),
-        msg.permanentRoom,
-        getAccessToken(),
-      ];
-      const response = makeResponse(message);
-      callback(response);
+    if (isError(room)) {
+      callback(makeResponse(room));
+      console.error(room);
+      return;
     }
+
+    // joined room succesfully
+    socket.join(room.roomId); // get messages regarding room
+
+    const response = makeResponse({
+      room,
+      spotifySearchToken: getAccessToken(),
+    });
+    callback(response);
+  });
+
+  socket.on("set-name-host", async (name, callback) => {
+    const room = Rooms.setRoomName(socket.id, name);
+
+    callback(makeResponse(room));
   });
 
   socket.on("toggle-permanent", (value) =>

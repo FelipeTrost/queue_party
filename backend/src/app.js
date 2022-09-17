@@ -27,12 +27,14 @@ app.get("/", (req, res) => {
 
 app.get("/spotify", async (req, res) => {
   const { code } = req.query;
+  console.log(req.query);
 
   const tokens = await codeToToken(code);
   if (!tokens) return res.redirect(`${process.env.FRONTEND_URL}`);
 
   const identifier = await getIdentifier(tokens.access_token);
   const secret = await Rooms.createRoom(tokens, identifier);
+  console.log("secret", secret);
 
   // create room, and get host handle
   return res.redirect(`${process.env.FRONTEND_URL}/host/${secret}`);

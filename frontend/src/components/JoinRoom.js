@@ -18,11 +18,9 @@ export default function JoinRoom() {
 
   const tryJoin = (room) => {
     if (room.length < 3) return;
-    room = room.toUpperCase();
 
     socket.emit("probe-room", room, (result) => {
       if (result) history.push(`/room/${room}`);
-      console.log("result", result);
     });
   };
 

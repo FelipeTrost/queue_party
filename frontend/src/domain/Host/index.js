@@ -12,11 +12,14 @@ import useHost from "./hostHook";
 import Checkbox from "../../components/Checkbox";
 import ShareQR from "../../components/ShareQRButton";
 import ShareButton from "../../components/ShareButton";
+import SetNameScreen from "./SetNameScreen";
 
 export default function Host() {
   const { secret: roomSecret } = useParams();
 
   const [
+    nameScreen,
+    sendName,
     room,
     guests,
     queue,
@@ -28,22 +31,24 @@ export default function Host() {
     closeRoom,
   ] = useHost(roomSecret);
 
-  if (!room)
+  if (!room && !nameScreen)
     return (
       <Container>
         <Title>Loading ...</Title>
       </Container>
     );
 
+  if (nameScreen) return <SetNameScreen sendName={sendName} />;
+
   return (
     <>
       <Helmet>
-        <title>Host of {room.roomId}</title>
+        <title>Host of {room.roomName}</title>
       </Helmet>
 
       <Container>
         <RoomHeader
-          roomId={room.roomId}
+          roomId={room.roomName}
           guests={guests}
           type="secondary"
           hostView

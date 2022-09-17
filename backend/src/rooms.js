@@ -1,4 +1,5 @@
 const ShortUniqueId = require("short-unique-id");
+const validRoomName = require("../../sharedUtils/validRoomName");
 const { encrypt, decrypt } = require("./encryption");
 const {
   getTrack,
@@ -18,27 +19,11 @@ function noRoomError(message) {
 class RoomGroup {
   constructor() {
     this.uid = new ShortUniqueId({
-      dictionary: [
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-      ],
+      dictionary: "0123456789abcdef".split(""),
     });
 
     this.rooms = {};
+    this.roomNameToRoom = {};
     this.roomOwners = {};
     this.roomParticipants = {};
 
@@ -52,18 +37,9 @@ class RoomGroup {
     return this.rooms[id];
   }
 
-  getRoomId() {
-    let id = this.uid.randomUUID(this.startuidlength);
-    let tries = 0;
-    while (this.rooms[id]) {
-      id = this.uid.randomUUID(this.startuidlength + tries / 3);
-      tries++;
-    }
-    return id;
-  }
-
-  joinRoomHost(creatorId, secret, emit) {
-    if (this.roomParticipants[creatorId])
+  joinRoomHost(hostId, secret, emit) {
+    // creatorId would be a socket id
+    if (this.roomParticipants[hostId])
       return new Error("You're a room participant");
 
     const roomId = this.secretToRoom(secret);
@@ -80,10 +56,25 @@ class RoomGroup {
     clearTimeout(this.rooms[roomId].timeoutToClose);
 
     // update exising room with new host socket.id
-    this.rooms[roomId].host = creatorId;
-    this.roomOwners[creatorId] = roomId;
+    const room = this.rooms[roomId];
 
-    return { roomId, permanentRoom: this.rooms[roomId].permanentRoom };
+    room.host = hostId;
+    this.roomOwners[hostId] = roomId;
+
+    return room;
+  }
+
+  joinRoom(roomName, personId) {
+    // personId would be a socket id
+    if (!this.probeRoom(roomName, personId))
+      return noRoomError("Room doesn't exist");
+
+    const roomId = this.roomNameToRoom[roomName];
+
+    this.rooms[roomId].guests[personId] = true;
+    this.roomParticipants[personId] = roomId;
+
+    return this.rooms[roomId];
   }
 
   togglePermanentRoom(hostId, value) {
@@ -98,6 +89,8 @@ class RoomGroup {
     if (value) clearTimeout(this.rooms[roomId].timeoutToClose);
   }
 
+  // Updates queue status for room participants
+  // emit -> function to send information to participants
   queueUpdater(roomId, emit) {
     return setInterval(async () => {
       try {
@@ -115,7 +108,7 @@ class RoomGroup {
           picture: track.album.images[1].url,
           id: track.id,
         };
-        emit("current-song", track_json);
+        emit(roomId, "current-song", track_json);
 
         // So that we don't delete things twice, can cause problems if a song
         // comes twice in a row, but it's better this way
@@ -148,6 +141,28 @@ class RoomGroup {
     }, 5000);
   }
 
+  setRoomName(hostId, roomName) {
+    const roomId = this.roomOwners[hostId];
+    if (!roomId) return new Error("You're not a host of any room");
+
+    const room = this.rooms[roomId];
+    if (room.roomNameSet) return new Error("Room name already set");
+
+    const validation = validRoomName(roomName);
+
+    if (!roomName) roomName = this.getRoomName();
+    else if (!validation.ok)
+      return new Error(`Not a valid room name: ${validation.message}`);
+    else if (this.roomNameToRoom[roomName] !== undefined)
+      return new Error("Name already in use");
+
+    room.roomNameSet = true;
+    room.roomName = roomName;
+    this.roomNameToRoom[roomName] = roomId;
+
+    return room;
+  }
+
   async createRoom(tokens, spotifyIdentifier) {
     if (!tokens || !(await pingToken(tokens.access_token)))
       return new Error("Invalid spotify authorization");
@@ -157,13 +172,15 @@ class RoomGroup {
     const existingRoom = this.hostIdentifiers[spotifyIdentifier];
     if (existingRoom) return this.roomToSecret(existingRoom);
 
-    const roomId = this.getRoomId();
+    const roomId = this.getRoomId(); // Internal room id
 
     this.rooms[roomId] = {
       host: undefined,
-      tokens,
       roomId,
+      tokens,
       spotifyIdentifier,
+      roomName: null,
+      roomNameSet: false,
       guests: {},
       queue: [],
       deviceId: null,
@@ -179,19 +196,12 @@ class RoomGroup {
     return this.roomToSecret(roomId);
   }
 
-  probeRoom(roomId, askingId) {
-    if (!this.rooms[roomId] || this.roomOwners[askingId]) return false;
+  probeRoom(roomName, askingId) {
+    // Asking id would be a socket id
+    const roomId = this.roomNameToRoom[roomName];
+    if (!roomId || !this.rooms[roomId] || this.roomOwners[askingId])
+      return false;
     return true;
-  }
-
-  joinRoom(roomId, personId) {
-    if (!this.probeRoom(roomId, personId))
-      return noRoomError("Room doesn't exist");
-
-    this.rooms[roomId].guests[personId] = true;
-    this.roomParticipants[personId] = roomId;
-
-    return this.rooms[roomId];
   }
 
   async putInQueue(song, personId) {
@@ -236,6 +246,10 @@ class RoomGroup {
     clearInterval(this.roomUpdaters[roomId].updaterId);
     delete this.roomUpdaters[roomId];
 
+    const roomName = this.rooms[roomId].roomName;
+    delete this.roomNameToRoom[roomName];
+
+    // remove participants
     for (const guest of Object.keys(this.rooms[roomId].guests))
       delete this.roomParticipants[guest];
 
@@ -284,20 +298,32 @@ class RoomGroup {
     });
   }
 
-  updatePlayingDevice(deviceId, personId) {
-    if (!deviceId) return;
+  // ------------------
+  // UTILS
+  // ------------------
 
-    const roomId = this.roomOwners[personId];
+  getId(startLength, usedUids) {
+    let id = this.uid.randomUUID(startLength);
+    let tries = 0;
+    while (usedUids[id]) {
+      id = this.uid.randomUUID(startLength + tries / 3);
+      tries++;
+    }
+    return id;
+  }
 
-    if (!roomId) return;
+  getRoomId() {
+    return this.getId(10, this.rooms);
+  }
 
-    this.rooms[roomId].deviceId = deviceId;
+  getRoomName() {
+    return this.getId(this.startuidlength, this.roomNameToRoom);
   }
 
   roomToSecret(roomId) {
     const identifier = this.rooms[roomId].spotifyIdentifier;
     const secret = JSON.stringify({
-      roomId,
+      // roomId, we no longer put the roomId in, because it isn't determined at the moment of creation
       identifier,
     });
 
@@ -310,8 +336,9 @@ class RoomGroup {
       const encrypted = Buffer.from(input, "base64").toString("ascii");
       const secret = JSON.parse(decrypt(encrypted));
 
-      if (this.hostIdentifiers[secret.identifier] == secret.roomId)
-        return secret.roomId;
+      // if (this.hostIdentifiers[secret.identifier] == secret.roomId)
+      if (this.hostIdentifiers[secret.identifier] !== undefined)
+        return this.hostIdentifiers[secret.identifier];
       else return null;
     } catch (error) {
       // because of an error parsing json probably
