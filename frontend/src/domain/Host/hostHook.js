@@ -77,13 +77,13 @@ export default function useHost(roomSecret) {
 
     socket.emit("put-in-queue", id, (response) => {
       // TODO: better reconnection
-      // if (!response.success && response.noRoom) {
-      //   joinRoom(roomSecret).then(() => {
-      //     putInQueue(track);
-      //   });
-      // } else if (!response.success) {
-      //   errorDispatcher(response.message);
-      // }
+      if (!response.success && response.noRoom) {
+        joinRoomHost(roomSecret).then(() => {
+          putInQueue(track);
+        });
+      } else if (!response.success) {
+        errorDispatcher(response.message);
+      }
     });
   }
 

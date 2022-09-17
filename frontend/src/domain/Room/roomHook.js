@@ -49,14 +49,14 @@ export default function useRoom(roomId) {
     const id = inputToId(track);
     socket.emit("put-in-queue", id, (response) => {
       // TODO: improve reconnection
-      // if (!response.success && response.noRoom) {
-      //   joinRoom(roomId).then(() => {
-      //     // errorDispatcher("Reconnected");
-      //     putInQueue(track);
-      //   });
-      // } else if (!response.success) {
-      //   errorDispatcher(response.message);
-      // }
+      if (!response.success && response.noRoom) {
+        joinRoom(roomId).then(() => {
+          // errorDispatcher("Reconnected");
+          putInQueue(track);
+        });
+      } else if (!response.success) {
+        errorDispatcher(response.message);
+      }
     });
   }
 
