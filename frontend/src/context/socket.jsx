@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
   const [connected, setConnected] = useState();
 
   useEffect(() => {
-    const socketObject = io(process.env.REACT_APP_SERVER_URL, {
+    const socketObject = io(import.meta.env.VITE_APP_SERVER_URL, {
       reconnectionDelayMax: 1000,
     });
 

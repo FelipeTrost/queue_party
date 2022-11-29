@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useErrorDispatcher } from "../../context/errorDispatcher";
 import { useSocket } from "../../context/socket";
 import { joinRoom } from "../../utils/socket";
 import inputToId from "../../utils/inputToSpotifyId";
 
-export default function useRoom(roomId) {
+function useRoom(roomId) {
   const socket = useSocket();
-  const history = useHistory();
+  // const history = useHistory();
+  const navigate = useNavigate();
   const errorDispatcher = useErrorDispatcher();
 
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ export default function useRoom(roomId) {
         setGuests(guests);
         setQueue(queue);
       })
-      .catch(() => history.push("/"));
+      .catch(() => navigate("/"));
 
     socket.on("update-participants", (guests) => setGuests(guests));
     socket.on("new-track", (track) => setQueue((q) => q.concat(track)));
@@ -41,7 +43,7 @@ export default function useRoom(roomId) {
 
     socket.on("room-ended", () => {
       errorDispatcher("Room closed");
-      history.push("/");
+      navigate("/");
     });
   }, []);
 
@@ -70,3 +72,5 @@ export default function useRoom(roomId) {
     updateSearchToken,
   ];
 }
+
+export default useRoom;

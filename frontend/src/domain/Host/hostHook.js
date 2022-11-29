@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useSocket } from "../../context/socket";
 import { useErrorDispatcher } from "../../context/errorDispatcher";
@@ -7,7 +8,8 @@ import inputToId from "../../utils/inputToSpotifyId";
 import { joinRoomHost } from "../../utils/socket";
 
 export default function useHost(roomSecret) {
-  const history = useHistory();
+  // const history = useHistory();
+  const navigate = useNavigate();
   const socket = useSocket();
   const errorDispatcher = useErrorDispatcher();
 
@@ -22,7 +24,7 @@ export default function useHost(roomSecret) {
   useEffect(() => {
     joinRoomHost({ socket, errorDispatcher }, roomSecret)
       .then((res) => initializeRoom(res))
-      .catch(() => history.push("/"));
+      .catch(() => navigate("/"));
 
     socket.on("token-update", (accessToken) => setAccessToken(accessToken));
     socket.on("update-participants", (guests) => setGuests(guests));
@@ -54,7 +56,7 @@ export default function useHost(roomSecret) {
   function closeRoom() {
     socket.emit("close-room", (r) => {
       // here im not sure, maybe I should redirect to the home inconditionally
-      if (r) history.push("/");
+      if (r) navigate("/");
       else errorDispatcher("Couldn't close room");
     });
   }

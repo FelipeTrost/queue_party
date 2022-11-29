@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Room from "./domain/Room";
 import Host from "./domain/Host";
@@ -14,19 +14,13 @@ export default function App() {
     <SocketProvider>
       <Router>
         <ErrorContext>
-          <Switch>
-            <Route path="/host/:secret">
-              <Host />
-            </Route>
+          <Routes>
+            <Route path="/host/:secret" element= {<Host />} />
 
-            <Route path="/room/:id">
-              <Room />
-            </Route>
+            <Route path="/room/:id" element= {<Room />} />
 
-            <Route path="/">
-              <Landing />
-            </Route>
-          </Switch>
+            <Route path="/" element= {<Landing />} />
+          </Routes>
         </ErrorContext>
       </Router>
     </SocketProvider>

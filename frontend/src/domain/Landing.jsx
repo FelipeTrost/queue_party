@@ -8,7 +8,8 @@ import Title from "../components/Title";
 
 import JoinRoom from "../components/JoinRoom";
 
-const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${process.env.REACT_APP_SERVER_URL}/spotify&scope=user-modify-playback-state%20user-read-playback-state`;
+const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${import.meta.env.VITE_APP_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${import.meta.env.VITE_APP_SERVER_URL}/spotify&scope=user-modify-playback-state%20user-read-playback-state`;
+
 export default function Landing() {
   return (
     <>

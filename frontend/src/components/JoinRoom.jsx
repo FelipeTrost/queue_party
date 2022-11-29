@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { ContinuousQrScanner } from "react-webcam-qr-scanner.ts";
+// import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useZxing } from "react-zxing";
 
 import Button from "./Button";
 import Input from "./Input";
@@ -8,47 +9,49 @@ import Popup from "./Popup";
 import Title from "./Title";
 import { FaQrcode } from "react-icons/fa";
 
-import { useSocket } from "./../context/socket";
+import { useSocket } from "../context/socket";
 
 export default function JoinRoom() {
   const socket = useSocket();
-  const history = useHistory();
+  // const history = useHistory();
+  const navigate = useNavigate();
   const [scanner, setScanner] = useState(false);
-  const [scanned, setScanned] = useState(false);
 
-  const tryJoin = (room) => {
+  const { ref, start } = useZxing({
+    onResult(result) {
+      tryJoin(result);
+    },
+  });
+
+  useEffect(()=>{
+    start();
+  }, []);
+
+  const tryJoin = (scanned) => {
+    const match = scanned.match(`${import.meta.env.VITE_APP_PUBLIC_URL}/room/(.*)`);
+    if (!match) return;
+    const room = match[1];
+
     if (room.length < 3) return;
 
     socket.emit("probe-room", room, (result) => {
-      if (result) history.push(`/room/${room}`);
+      if (result) navigate(`/room/${room}`);
     });
   };
-
-  const scann = (result) => {
-    if (!result) return;
-    const match = result.match(`${process.env.REACT_APP_PUBLIC_URL}/room/(.*)`);
-    if (!match) return;
-
-    tryJoin(match[1]);
-  };
-
-  useEffect(() => {
-    scann(scanned);
-  }, [scanned]);
 
   return (
     <>
       <Popup show={scanner} close={() => setScanner(false)}>
         <div
-          styke={{
+          style={{
             display: "flex",
             alignItems: "center",
           }}
         >
-          <ContinuousQrScanner
-            onQrCode={setScanned}
-            style={{ width: "100%", height: "100%" }}
-          />
+          <video style={{
+            width: "100%",
+            height: "80vh",
+          }} ref={ref} />
         </div>
       </Popup>
 
