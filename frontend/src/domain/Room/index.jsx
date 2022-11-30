@@ -54,7 +54,7 @@ export default function Room() {
         >
           <ShareQR roomId={roomId} />
 
-          <ShareButton />
+          <ShareButton roomId={roomId} />
 
           <div style={{ minWidth: "70%", flexGrow: "1" }}>
             <SpotifySerach

@@ -20,18 +20,16 @@ export default function JoinRoom() {
   const { ref, start } = useZxing({
     onResult(result) {
       tryJoin(result);
-    },
+      const match = scanned.match(`${import.meta.env.VITE_APP_PUBLIC_URL}/room/(.*)`);
+      if (!match) tryJoin(match[1]);
+    }
   });
-
+    
   useEffect(()=>{
     start();
   }, []);
 
-  const tryJoin = (scanned) => {
-    const match = scanned.match(`${import.meta.env.VITE_APP_PUBLIC_URL}/room/(.*)`);
-    if (!match) return;
-    const room = match[1];
-
+  const tryJoin = (room) => {
     if (room.length < 3) return;
 
     socket.emit("probe-room", room, (result) => {

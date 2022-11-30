@@ -1,6 +1,6 @@
 // uses the best option for sharing available to the browser
 export function roomLink(roomId) {
-  return `${process.env.REACT_APP_PUBLIC_URL}/room/${roomId}`;
+  return `${import.meta.env.VITE_APP_PUBLIC_URL}/room/${roomId}`;
 }
 
 export function share(roomId, errorDispatcher) {
