@@ -5,9 +5,11 @@ import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 
+const dev = import.meta.env.DEV;
+const Wrapper = dev ? React.Fragment : React.StrictMode;
+
 root.render(
-  <React.StrictMode>
+  <Wrapper>
     <App />
-  </React.StrictMode>,
-  
+  </Wrapper>,
 );
