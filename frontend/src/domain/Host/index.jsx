@@ -89,7 +89,7 @@ export default function Host() {
               style={{ marginRight: "10px" }}
             />
 
-            <ShareButton roomId={room.roomId} type="secondary" />
+            <ShareButton roomId={room.roomName} type="secondary" />
 
             <ShareQR roomId={room.roomId} type="secondary" />
           </div>
