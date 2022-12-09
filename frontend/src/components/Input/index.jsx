@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 
 export default function Input({
-  onFocus,
   onChange,
-  placeholder,
   value,
-  style,
   type,
   Ref,
+  ...props
 }) {
   const [text, setText] = useState("");
 
@@ -19,13 +17,11 @@ export default function Input({
 
   return (
     <input
-      style={style}
       className={`cool-input ${type || ""}`}
-      placeholder={placeholder}
       value={userControlled ? value : text}
       onChange={(e) => (userControlled ? onChange : setText)(e.target.value)}
-      onFocus={onFocus}
       ref={Ref}
+      {...props}
     />
   );
 }

@@ -20,12 +20,14 @@ export default function JoinRoom() {
   const { ref, start } = useZxing({
     onResult(result) {
       tryJoin(result);
-      const match = scanned.match(`${import.meta.env.VITE_APP_PUBLIC_URL}/room/(.*)`);
+      const match = scanned.match(
+        `${import.meta.env.VITE_APP_PUBLIC_URL}/room/(.*)`
+      );
       if (!match) tryJoin(match[1]);
-    }
+    },
   });
-    
-  useEffect(()=>{
+
+  useEffect(() => {
     start();
   }, []);
 
@@ -46,10 +48,13 @@ export default function JoinRoom() {
             alignItems: "center",
           }}
         >
-          <video style={{
-            width: "100%",
-            height: "80vh",
-          }} ref={ref} />
+          <video
+            style={{
+              width: "100%",
+              height: "80vh",
+            }}
+            ref={ref}
+          />
         </div>
       </Popup>
 
@@ -77,6 +82,8 @@ export default function JoinRoom() {
             onChange={tryJoin}
             placeholder="Room id"
             style={{ width: "80%" }}
+            autoCapitalize={false}
+            autoCorrect={false}
           />
 
           <Button onClick={() => setScanner(true)}>
