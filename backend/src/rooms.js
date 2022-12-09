@@ -8,7 +8,7 @@ const {
   getToken,
   getPlayingId,
 } = require("./spotify");
-const seconds2closeroom = (process.env.SECONDS_TO_CLOSE || 1.5 * 60) * 60;
+const seconds2closeroom = process.env.SECONDS_TO_CLOSE || 60;
 
 function noRoomError(message) {
   const error = new Error(message);
@@ -148,13 +148,18 @@ class RoomGroup {
     const room = this.rooms[roomId];
     if (room.roomNameSet) return new Error("Room name already set");
 
-    const validation = validRoomName(roomName);
+    // Check if custom name is available and valid
+    if (!roomName) {
+      roomName = this.getRoomName();
+    } else {
+      const validation = validRoomName(roomName);
 
-    if (!roomName) roomName = this.getRoomName();
-    else if (!validation.ok)
-      return new Error(`Not a valid room name: ${validation.message}`);
-    else if (this.roomNameToRoom[roomName] !== undefined)
-      return new Error("Name already in use");
+      if (this.roomNameToRoom[roomName] !== undefined)
+        return new Error("Name already in use");
+      //
+      else if (!validation.ok)
+        return new Error(`Not a valid room name: ${validation.message}`);
+    }
 
     room.roomNameSet = true;
     room.roomName = roomName;
