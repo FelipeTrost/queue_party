@@ -82,8 +82,7 @@ export default function JoinRoom() {
             onChange={tryJoin}
             placeholder="Room id"
             style={{ width: "80%" }}
-            autoCapitalize={false}
-            autoCorrect={false}
+            autoCorrect="false"
           />
 
           <Button onClick={() => setScanner(true)}>

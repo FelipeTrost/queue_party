@@ -59,6 +59,7 @@ export default function SetNameScreen({ sendName }) {
               placeholder="Room name"
               style={{ width: "80%" }}
               type="secondary"
+              autoCorrect="false"
             />
 
             <Button type="secondary" onClick={() => sendName(customName)}>

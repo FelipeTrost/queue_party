@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 
-export default function Input({
-  onChange,
-  value,
-  type,
-  Ref,
-  ...props
-}) {
+export default function Input({ onChange, value, type, Ref, ...props }) {
   const [text, setText] = useState("");
 
   // if the user decides to controle the value themselves, they can
@@ -21,6 +15,7 @@ export default function Input({
       value={userControlled ? value : text}
       onChange={(e) => (userControlled ? onChange : setText)(e.target.value)}
       ref={Ref}
+      autoCapitalize="false"
       {...props}
     />
   );
