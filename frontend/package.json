@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "qrcode": "^1.5.1",
     "react": "^18.2.0",
     "react-animated-css": "^1.2.1",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.6.0",
-    "react-qr-code": "^2.0.8",
+    "react-qr-code": "^2.0.11",
     "react-router-dom": "^6.4.3",
-    "react-zxing": "^1.0.5",
     "socket.io-client": "^4.5.4",
     "use-debounce": "^9.0.0"
   },
