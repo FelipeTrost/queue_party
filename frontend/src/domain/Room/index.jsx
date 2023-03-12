@@ -24,6 +24,7 @@ export default function Room() {
     putInQueue,
     nowPlaying,
     updateToken,
+    roomName,
   ] = useRoom(roomId);
 
   if (loading)
@@ -52,9 +53,9 @@ export default function Room() {
             gap: "5px",
           }}
         >
-          <ShareQR roomId={roomId} />
+          <ShareQR roomName={roomName} />
 
-          <ShareButton roomId={roomId} />
+          <ShareButton roomId={roomName} />
 
           <div style={{ minWidth: "70%", flexGrow: "1" }}>
             <SpotifySerach

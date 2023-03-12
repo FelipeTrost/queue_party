@@ -20,6 +20,7 @@ function useRoom(roomId) {
   const [queue, setQueue] = useState([]);
   const [spotifyToken, setSpotifyToken] = useState("");
   const [nowPlaying, setNowPlaying] = useState(null);
+  const [roomName, setRoomName] = useState("");
 
   function updateSearchToken() {
     socket.emit("search-token", (token) => setSpotifyToken(token));
@@ -27,11 +28,12 @@ function useRoom(roomId) {
 
   useEffect(() => {
     joinRoom({ socket, errorDispatcher }, roomId)
-      .then(([guests, queue, accessToken]) => {
+      .then(([guests, queue, accessToken, roomName]) => {
         setSpotifyToken(accessToken);
         setLoading(false);
         setGuests(guests);
         setQueue(queue);
+        setRoomName(roomName);
       })
       .catch(() => navigate("/"));
 
@@ -70,6 +72,7 @@ function useRoom(roomId) {
     putInQueue,
     nowPlaying,
     updateSearchToken,
+    roomName,
   ];
 }
 

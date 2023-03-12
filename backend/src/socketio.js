@@ -59,7 +59,9 @@ function configSocket(socket, io, getAccessToken, getAccessToken) {
 
     if (!isError(room)) {
       socket.join(room.roomId);
-      callback(makeResponse([room.guests, room.queue, getAccessToken()]));
+      callback(
+        makeResponse([room.guests, room.queue, getAccessToken(), room.roomName])
+      );
       socket.to(room.roomId).emit("update-participants", room.guests);
     } else {
       callback(makeResponse(room));

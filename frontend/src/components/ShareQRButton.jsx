@@ -7,13 +7,13 @@ import { roomLink } from "../utils/sharing";
 import Container from "./Container";
 import Button from "./Button";
 
-export default function ShareQR({ roomId, ...rest }) {
+export default function ShareQR({ roomName, ...rest }) {
   const [qrPopup, setQrPopup] = useState(false);
   return (
     <>
       <Popup show={qrPopup} close={() => setQrPopup(false)}>
         <Container center vcenter style={{ height: "80vh " }}>
-          <QRCode value={roomLink(roomId)} />
+          <QRCode value={roomLink(roomName)} />
         </Container>
       </Popup>
 

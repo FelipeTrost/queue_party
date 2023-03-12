@@ -91,7 +91,7 @@ export default function Host() {
 
             <ShareButton roomId={room.roomName} type="secondary" />
 
-            <ShareQR roomId={room.roomId} type="secondary" />
+            <ShareQR roomName={room.roomName} type="secondary" />
           </div>
         </div>
 
