@@ -18,6 +18,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     const socketObject = io(import.meta.env.VITE_APP_SERVER_URL, {
       reconnectionDelayMax: 1000,
+      withCredentials: false,
     });
 
     socket.current = socketObject;
